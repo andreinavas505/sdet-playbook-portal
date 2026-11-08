@@ -3,123 +3,59 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SDET Keyword & Stack Alignment Scanner | Global Tech Career</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <title>Global Tech Career | Interactive Engineering Labs</title>
   <style>
     body {
       background-color: #030712;
       color: #f8fafc;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      text-align: center;
+      padding: 20px;
+    }
+    .box {
+      max-width: 500px;
+      padding: 32px;
+      border: 1px solid #1e293b;
+      border-radius: 16px;
+      background: #090d16;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    .logo {
+      display: inline-block;
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #06b6d4, #2563eb);
+      line-height: 48px;
+      font-weight: 900;
+      font-size: 18px;
+      margin-bottom: 16px;
+    }
+    h1 { font-size: 20px; margin: 0 0 8px 0; color: #fff; }
+    p { font-size: 13px; color: #94a3b8; line-height: 1.5; margin: 0 0 20px 0; }
+    a {
+      display: inline-block;
+      background: #06b6d4;
+      color: #030712;
+      padding: 10px 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 13px;
     }
   </style>
 </head>
-<body class="min-h-screen bg-[#030712] flex items-center justify-center p-4 md:p-8 antialiased">
-
-  <!-- Interactive Lab Card (Standalone) -->
-  <div class="w-full max-w-4xl bg-[#090d16] border-2 border-cyan-500/70 rounded-2xl p-6 md:p-8 shadow-2xl shadow-cyan-950/50 space-y-5">
-    
-    <!-- Header -->
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-5">
-      <div>
-        <div class="flex items-center gap-2 mb-1.5">
-          <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest bg-cyan-950 border border-cyan-800 text-cyan-400">
-            <i class="fa-solid fa-flask mr-1"></i> Interactive Lab Station
-          </span>
-          <span class="text-xs text-slate-400 font-semibold">Global Tech Career</span>
-        </div>
-        <h1 class="text-xl md:text-2xl font-black text-white tracking-tight">
-          SDET Keyword & Stack Alignment Scanner
-        </h1>
-        <p class="text-xs text-slate-300 mt-1">
-          Paste any target U.S. Job Description below to evaluate your technical keywords against deterministic ATS filter expectations.
-        </p>
-      </div>
-
-      <button onclick="loadSampleJD()" class="self-start sm:self-auto text-xs px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-slate-700 font-bold transition-all shadow-sm flex items-center gap-2 flex-shrink-0">
-        <i class="fa-solid fa-file-import"></i> Load Sample U.S. SDET JD
-      </button>
-    </div>
-
-    <!-- Input Box -->
-    <div class="space-y-2">
-      <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider">
-        Target Job Description (JD):
-      </label>
-      <textarea id="jd-input-box" rows="8" class="w-full bg-[#030712] border border-slate-700 focus:border-cyan-400 rounded-xl p-4 text-xs text-white placeholder-slate-500 font-mono transition-all focus:outline-none" placeholder="Paste U.S. SDET Job Description here or click 'Load Sample' above..."></textarea>
-    </div>
-
-    <!-- Action Buttons -->
-    <div class="flex items-center gap-3">
-      <button onclick="runJDAnalysis()" class="px-6 py-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-black tracking-wide transition-all shadow-lg shadow-cyan-500/25 flex items-center gap-2">
-        <i class="fa-solid fa-bolt"></i> Analyze Stack & Extract Signals
-      </button>
-      <button onclick="clearJDInput()" class="px-4 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-slate-200 text-xs font-semibold transition-all">
-        Clear
-      </button>
-    </div>
-
-    <!-- Results Panel -->
-    <div id="jd-results-panel" class="hidden pt-5 border-t border-slate-800 space-y-4">
-      <div id="jd-score-banner" class="text-base font-bold text-white"></div>
-      
-      <div>
-        <div class="text-xs text-slate-400 font-semibold mb-2 uppercase tracking-wider">
-          Extracted Engineering Signals:
-        </div>
-        <div id="jd-chips-container" class="flex flex-wrap gap-2"></div>
-      </div>
-    </div>
-
+<body>
+  <div class="box">
+    <div class="logo">GTC</div>
+    <h1>Global Tech Career</h1>
+    <p>This domain hosts interactive laboratory environments and engineering assessment stations for students enrolled in our technical playbooks.</p>
+    <a href="https://globaltechcareer.com">Visit Official Website &rarr;</a>
   </div>
-
-  <script>
-    var sampleJD = "Senior SDET / Quality Engineering Architect (Remote - US)\n\nRequirements:\n- 5+ years designing enterprise test automation frameworks using Playwright, TypeScript, and Docker.\n- Experience implementing CI/CD pipelines in GitHub Actions with test matrix sharding.\n- Background in API Contract Testing with Pact and performance validation with k6.\n- Track record eliminating flaky tests, reducing CI runtime, and lowering defect escape rates.\n- Strong proficiency in Data Structures and Algorithms.";
-
-    var coreTokens = [
-      "Playwright", "TypeScript", "Python", "CI/CD", "GitHub Actions", 
-      "Docker", "Pact", "Contract Testing", "Sharding", "Parallel", 
-      "Flaky", "k6", "Performance", "Algorithms"
-    ];
-
-    function loadSampleJD() {
-      document.getElementById("jd-input-box").value = sampleJD;
-      runJDAnalysis();
-    }
-
-    function clearJDInput() {
-      document.getElementById("jd-input-box").value = "";
-      document.getElementById("jd-results-panel").classList.add("hidden");
-    }
-
-    function runJDAnalysis() {
-      var text = document.getElementById("jd-input-box").value.toLowerCase();
-      if (!text.trim()) {
-        alert("Please paste a Job Description first.");
-        return;
-      }
-
-      var found = 0;
-      var chipsBox = document.getElementById("jd-chips-container");
-      chipsBox.innerHTML = "";
-
-      coreTokens.forEach(function(tok) {
-        var match = text.indexOf(tok.toLowerCase()) !== -1;
-        var badge = document.createElement("span");
-        badge.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all " + 
-          (match ? "bg-emerald-950 text-emerald-300 border border-emerald-500 shadow-sm shadow-emerald-950/50" : "bg-slate-900 text-slate-500 border border-slate-800");
-        badge.innerText = (match ? "✓ " : "○ ") + tok;
-        chipsBox.appendChild(badge);
-        if (match) found++;
-      });
-
-      var score = Math.round((found / coreTokens.length) * 100);
-      document.getElementById("jd-score-banner").innerHTML = 
-        "ATS Alignment Match: <span class='" + (score >= 70 ? "text-emerald-400" : "text-amber-400") + " font-black text-lg'>" + 
-        score + "%</span> (" + found + "/" + coreTokens.length + " Core Signals Detected)";
-      
-      document.getElementById("jd-results-panel").classList.remove("hidden");
-    }
-  </script>
 </body>
 </html>
