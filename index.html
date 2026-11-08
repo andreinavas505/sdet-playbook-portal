@@ -1,180 +1,280 @@
-<!-- Hotmart Club Lesson: LESSON 01 - Deconstructing U.S. SDET JDs & ATS Parsing Architecture [FREE PREVIEW] -->
-<div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; color: #1e293b; max-width: 860px; margin: 0 auto; padding: 24px;">
-  <div style="background: linear-gradient(135deg, #0f172a, #1e293b); color: #ffffff; padding: 28px; border-radius: 12px; margin-bottom: 24px;">
-    <span style="font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; color: #10b981; background: rgba(16, 185, 129, 0.15); padding: 4px 10px; border-radius: 20px;">MODULE 01</span>
-    <h1 style="font-size: 26px; font-weight: 800; margin: 12px 0 6px 0; color: #ffffff;">Deconstructing U.S. SDET JDs & ATS Architecture</h1>
-    <p style="font-size: 14px; color: #cbd5e1; margin: 0;">Why traditional QA resumes are discarded in under 6 seconds and how to align your core automation stack.</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The SDET & Test Automation Job Search Playbook</title>
+  <style>
+    :root {
+      --bg-main: #030712;
+      --bg-card: #0f172a;
+      --border-card: #1e293b;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --cyan-brand: #06b6d4;
+      --cyan-bright: #22d3ee;
+      --emerald: #10b981;
+      --rose: #f43f5e;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      padding: 32px 16px;
+    }
+    .container { max-width: 900px; margin: 0 auto; }
+    .badge {
+      display: inline-block;
+      background: rgba(6, 182, 212, 0.15);
+      color: var(--cyan-bright);
+      border: 1px solid rgba(6, 182, 212, 0.3);
+      padding: 4px 12px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    h1 { font-size: 28px; font-weight: 800; color: #ffffff; margin-bottom: 8px; }
+    h2 { font-size: 20px; font-weight: 700; color: #ffffff; margin: 24px 0 12px 0; }
+    p { color: var(--text-muted); margin-bottom: 16px; }
+    
+    .grid-comparative {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    @media(max-width: 640px) { .grid-comparative { grid-template-columns: 1fr; } }
+    
+    .card-discarded {
+      background: #180d12;
+      border: 1px solid #4c0519;
+      border-radius: 10px;
+      padding: 16px;
+    }
+    .card-discarded h3 { color: var(--rose); font-size: 14px; text-transform: uppercase; margin-bottom: 12px; }
+    .card-discarded ul { list-style: none; color: #fda4af; font-size: 13px; }
+    .card-discarded li { margin-bottom: 8px; }
+    .card-discarded li::before { content: "✕ "; color: var(--rose); font-weight: bold; }
+
+    .card-sdet {
+      background: #091a16;
+      border: 1px solid #064e3b;
+      border-radius: 10px;
+      padding: 16px;
+    }
+    .card-sdet h3 { color: var(--emerald); font-size: 14px; text-transform: uppercase; margin-bottom: 12px; }
+    .card-sdet ul { list-style: none; color: #6ee7b7; font-size: 13px; }
+    .card-sdet li { margin-bottom: 8px; }
+    .card-sdet li::before { content: "✓ "; color: var(--emerald); font-weight: bold; }
+
+    .code-box {
+      background: #020617;
+      border: 1px solid #1e293b;
+      border-radius: 8px;
+      padding: 16px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 13px;
+      color: #38bdf8;
+      margin-bottom: 24px;
+      white-space: pre-wrap;
+    }
+
+    /* Interactive Lab Card */
+    .lab-box {
+      background: var(--bg-card);
+      border: 2px solid var(--cyan-brand);
+      border-radius: 12px;
+      padding: 24px;
+      margin-top: 24px;
+      box-shadow: 0 10px 25px -5px rgba(6, 182, 212, 0.15);
+    }
+    .lab-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .lab-title { font-size: 18px; font-weight: 700; color: #ffffff; }
+    
+    button.btn-action {
+      background: #1e293b;
+      color: var(--cyan-bright);
+      border: 1px solid #334155;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    button.btn-action:hover {
+      background: #334155;
+      border-color: var(--cyan-bright);
+    }
+    button.btn-primary {
+      background: var(--cyan-brand);
+      color: #020617;
+      border: none;
+      font-weight: 700;
+    }
+    button.btn-primary:hover {
+      background: var(--cyan-bright);
+    }
+
+    textarea.lab-textarea {
+      width: 100%;
+      height: 140px;
+      background: #020617;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 12px;
+      color: #ffffff;
+      font-family: inherit;
+      font-size: 13px;
+      resize: vertical;
+      margin-bottom: 16px;
+    }
+    textarea.lab-textarea:focus {
+      outline: none;
+      border-color: var(--cyan-brand);
+    }
+
+    .results-container {
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid #1e293b;
+      display: none;
+    }
+    .score-banner {
+      font-size: 16px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 12px;
+    }
+    .chips-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .chip {
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .chip-found { background: #064e3b; color: #34d399; border: 1px solid #059669; }
+    .chip-missing { background: #1e293b; color: #64748b; border: 1px solid #334155; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <span class="badge">Module 01 • Lesson 01</span>
+    <h1>Target Role & Quality Framework Alignment</h1>
+    <p>How top-tier U.S. hiring managers and ATS parsers dissect Quality Engineering profiles.</p>
+
+    <div class="grid-comparative">
+      <div class="card-discarded">
+        <h3>Discarded QA Profile</h3>
+        <ul>
+          <li>Listings of manual test cases in Jira / TestRail.</li>
+          <li>"Responsible for testing the UI and logging bugs".</li>
+          <li>Vague mentions of Selenium without framework context.</li>
+          <li>Zero metrics on CI/CD execution or stability.</li>
+        </ul>
+      </div>
+      <div class="card-sdet">
+        <h3>$160k+ U.S. SDET Profile</h3>
+        <ul>
+          <li>Designed modular Playwright/TypeScript test architectures.</li>
+          <li>Parallel test sharding reducing pipeline runtime by 65%.</li>
+          <li>API contract testing preventing regression leaks.</li>
+          <li>Metrics on flaky test quarantine and zero defect escapes.</li>
+        </ul>
+      </div>
+    </div>
+
+    <h2>Inside the ATS Parsing Engine (Greenhouse, Lever, Workday)</h2>
+    <div class="code-box">// What Greenhouse / Lever extracts when parsing your PDF:
+entity_type: "TITLE" &rarr; Extracted: "Senior SDET" (Passes boolean query)
+entity_type: "PRIMARY_STACK" &rarr; Extracted: ["Playwright", "TypeScript", "Docker", "GitHub Actions"]
+entity_type: "METRIC_DENSITY" &rarr; Found: "65% CI runtime reduction", "0% defect escape rate"</div>
+
+    <!-- Interactive Lab Station -->
+    <div class="lab-box">
+      <div class="lab-header">
+        <span class="lab-title">Interactive Lab: SDET Keyword & Stack Alignment Scanner</span>
+        <button type="button" id="btn-load-sample" class="btn-action">Load Sample U.S. SDET JD</button>
+      </div>
+      <p style="font-size: 13px;">Paste any target U.S. Job Description below to evaluate your keywords against top ATS filter standards:</p>
+      
+      <textarea id="jd-input" class="lab-textarea" placeholder="Paste U.S. Job Description here or click 'Load Sample' above..."></textarea>
+      
+      <button type="button" id="btn-analyze" class="btn-action btn-primary">Analyze Stack & Extract Signals</button>
+
+      <div id="results" class="results-container">
+        <div id="score-text" class="score-banner"></div>
+        <p style="font-size: 12px; margin-bottom: 8px;">Extracted Engineering Tokens:</p>
+        <div id="chips-area" class="chips-group"></div>
+      </div>
+    </div>
   </div>
-  
-          <div class="space-y-6">
-            <!-- Executive Welcome from Hiring Manager -->
-            <div class="p-6 rounded-2xl bg-gradient-to-r from-emerald-950/60 via-[#111827] to-[#111827] border border-emerald-500/40 space-y-3.5 shadow-lg">
-              <div class="flex items-center gap-2 text-emerald-400 text-xs font-black uppercase tracking-wider">
-                <i data-lucide="award" class="w-4 h-4"></i>
-                <span>Executive Welcome from the Hiring Manager</span>
-              </div>
-              <p class="text-sm text-slate-100 leading-relaxed font-semibold">
-                Welcome to this free preview lesson. If you are a test automation engineer or technical QA professional pursuing high-compensation roles in the United States and global remote markets (<strong class="text-emerald-400">$130,000 – $190,000+ USD</strong>), you already possess deep technical acumen.
-              </p>
-              <p class="text-xs text-slate-300 leading-relaxed font-normal">
-                As an SDET Hiring Manager, I have reviewed thousands of engineering applications. The single biggest blocker for qualified engineers is not coding capability—it is an <em>inability to translate technical effort into software engineering evidence, architectural decisions, and measurable release velocity</em>. This free lesson shows you exactly how applicant tracking systems screen your profile and how to reconstruct your technical identity.
-              </p>
-            </div>
 
-            <!-- Deep Dive: U.S. SDET Market Economics -->
-            <div class="space-y-3.5">
-              <h3 class="text-base font-bold text-white flex items-center gap-2">
-                <i data-lucide="trending-up" class="w-4 h-4 text-emerald-400"></i>
-                1. The $130k–$190k+ SDET Archetype: What U.S. Engineering Directors Look For
-              </h3>
-              <p class="text-xs text-slate-300 leading-relaxed font-normal">
-                In top-tier U.S. engineering organizations, the line between Software Engineer (SWE) and Software Development Engineer in Test (SDET) has blurred. Companies paying above $130,000 USD do not hire script-writers who merely convert manual test cases into automation steps. They hire <strong class="text-white">Reliability & Velocity Architects</strong> who can:
-              </p>
-              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5 text-xs">
-                <div class="p-4 rounded-xl bg-[#111827] border border-slate-700/80 space-y-1.5 shadow-md">
-                  <span class="font-bold text-emerald-400 text-xs block">1. Build Test Infrastructure</span>
-                  <p class="text-slate-300 text-xs leading-relaxed">Design containerized execution grids, ephemeral test environments, and parallel execution pipelines that reduce CI runtimes to under 15 minutes.</p>
-                </div>
-                <div class="p-4 rounded-xl bg-[#111827] border border-slate-700/80 space-y-1.5 shadow-md">
-                  <span class="font-bold text-cyan-400 text-xs block">2. Shift-Left Quality Gates</span>
-                  <p class="text-slate-300 text-xs leading-relaxed">Implement consumer-driven contract testing, static code analysis, and branch-level verification so regressions never reach staging.</p>
-                </div>
-                <div class="p-4 rounded-xl bg-[#111827] border border-slate-700/80 space-y-1.5 shadow-md">
-                  <span class="font-bold text-amber-400 text-xs block">3. Speak Business & Dev Metrics</span>
-                  <p class="text-slate-300 text-xs leading-relaxed">Articulate quality impact in terms of MTTR (Mean Time to Resolution), deployment frequency, escaped defect rate, and engineering hours saved.</p>
-                </div>
-              </div>
-            </div>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      var sampleJD = "Senior SDET / Test Automation Architect (Remote - US)\n\nRequirements:\n- 5+ years designing enterprise test automation frameworks from scratch using Playwright, Cypress, or Selenium with TypeScript/Python.\n- Deep understanding of CI/CD pipelines (GitHub Actions, Docker) and test parallelization/sharding.\n- Experience with API Contract Testing using Pact and performance profiling with k6.\n- Proven track record reducing regression execution time and eliminating flaky tests.\n- Strong coding background in Data Structures and Algorithms.";
+      
+      var coreKeywords = [
+        "Playwright", "TypeScript", "Python", "CI/CD", 
+        "GitHub Actions", "Docker", "Pact", "Contract Testing", 
+        "Sharding", "Parallel", "Flaky", "k6", "Performance"
+      ];
 
-            <!-- Curriculum Overview -->
-            <div class="p-5 rounded-2xl bg-[#111827] border border-slate-700 space-y-3.5">
-              <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
-                <span class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                  <i data-lucide="layers" class="w-4 h-4 text-emerald-400"></i>
-                  What You Will Master in This 4-Module System
-                </span>
-                <span class="text-[11px] text-slate-400 font-mono font-bold">9 Hands-on Lessons</span>
-              </div>
+      var btnLoad = document.getElementById("btn-load-sample");
+      var btnAnalyze = document.getElementById("btn-analyze");
+      var jdInput = document.getElementById("jd-input");
+      var resultsDiv = document.getElementById("results");
+      var scoreText = document.getElementById("score-text");
+      var chipsArea = document.getElementById("chips-area");
 
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5 text-xs">
-                <div class="p-3.5 rounded-xl bg-[#1e293b] border border-slate-700 space-y-1.5">
-                  <div class="flex items-center justify-between">
-                    <span class="font-bold text-emerald-400 text-xs">Module 1: Role & Framework Alignment</span>
-                    <span class="text-[10px] text-slate-400 font-mono">Lessons 1–2</span>
-                  </div>
-                  <p class="text-slate-300 text-xs leading-relaxed">
-                    Deconstruct U.S. SDET job descriptions, configure ATS semantic keyword parsers, and calculate the engineering ROI of flaky test quarantine.
-                  </p>
-                </div>
+      btnLoad.addEventListener("click", function() {
+        jdInput.value = sampleJD;
+        analyzeContent();
+      });
 
-                <div class="p-3.5 rounded-xl bg-[#1e293b] border border-slate-700 space-y-1.5">
-                  <div class="flex items-center justify-between">
-                    <span class="font-bold text-amber-400 text-xs">Module 2: Resume & LinkedIn Inbound</span>
-                    <span class="text-[10px] text-slate-400 font-mono">Lessons 3–4</span>
-                  </div>
-                  <p class="text-slate-300 text-xs leading-relaxed">
-                    Build resume bullets with the 4-part formula <code>[Action + Scope + Tool + Metric]</code> and configure a 7-prompt AI engine for passive recruiter InMails.
-                  </p>
-                </div>
+      btnAnalyze.addEventListener("click", function() {
+        analyzeContent();
+      });
 
-                <div class="p-3.5 rounded-xl bg-[#1e293b] border border-slate-700 space-y-1.5">
-                  <div class="flex items-center justify-between">
-                    <span class="font-bold text-cyan-400 text-xs">Module 3: Architecture & Code Loops</span>
-                    <span class="text-[10px] text-slate-400 font-mono">Lessons 5–7</span>
-                  </div>
-                  <p class="text-slate-300 text-xs leading-relaxed">
-                    Master test concurrency and sharding in CI/CD, consumer-driven API contract testing (Pact), and conquer live coding technical screens.
-                  </p>
-                </div>
+      function analyzeContent() {
+        var text = jdInput.value.toLowerCase();
+        if (!text.trim()) {
+          alert("Please paste a Job Description first.");
+          return;
+        }
 
-                <div class="p-3.5 rounded-xl bg-[#1e293b] border border-slate-700 space-y-1.5">
-                  <div class="flex items-center justify-between">
-                    <span class="font-bold text-purple-400 text-xs">Module 4: Offers & Career Execution</span>
-                    <span class="text-[10px] text-slate-400 font-mono">Lessons 8–9</span>
-                  </div>
-                  <p class="text-slate-300 text-xs leading-relaxed">
-                    Decode U.S. total compensation structures (Base, Bonus, 4-year RSU vesting), run counter-offer scripts, and manage a 90-day search Kanban.
-                  </p>
-                </div>
-              </div>
-            </div>
+        var foundCount = 0;
+        chipsArea.innerHTML = "";
 
-            <!-- High-Contrast Comparison Grid (Discarded QA vs $160k+ SDET) -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div class="p-5 rounded-2xl bg-[#1c1117] border border-red-500/50 space-y-2.5 shadow-lg">
-                <span class="text-xs font-black uppercase tracking-wider text-rose-400 flex items-center gap-2">
-                  <i data-lucide="x-circle" class="w-4 h-4 text-rose-400"></i> Discarded QA Resume Profile
-                </span>
-                <ul class="text-xs text-rose-200/90 space-y-2 list-disc list-inside leading-relaxed">
-                  <li>Listings of manual test cases in TestRail or Jira.</li>
-                  <li>"Responsible for testing the UI and logging bugs".</li>
-                  <li>Vague mentions of Selenium without framework context.</li>
-                  <li>Zero evidence of CI/CD runtime optimization or stability.</li>
-                  <li>Skills presented as arbitrary percentages (e.g. "Java 85%").</li>
-                  <li>No mention of infrastructure, concurrency, or contract boundaries.</li>
-                </ul>
-              </div>
+        coreKeywords.forEach(function(kw) {
+          var matched = text.indexOf(kw.toLowerCase()) !== -1;
+          var span = document.createElement("span");
+          span.className = "chip " + (matched ? "chip-found" : "chip-missing");
+          span.textContent = (matched ? "✓ " : "○ ") + kw;
+          chipsArea.appendChild(span);
+          if (matched) foundCount++;
+        });
 
-              <div class="p-5 rounded-2xl bg-[#091e17] border border-emerald-500/50 space-y-2.5 shadow-lg">
-                <span class="text-xs font-black uppercase tracking-wider text-emerald-400 flex items-center gap-2">
-                  <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i> $160k+ U.S. SDET Profile
-                </span>
-                <ul class="text-xs text-emerald-200/90 space-y-2 list-disc list-inside leading-relaxed">
-                  <li>Designed modular Playwright/TypeScript test architectures.</li>
-                  <li>Parallel test sharding reducing pipeline runtime by 65%.</li>
-                  <li>API contract testing preventing regression leaks to staging.</li>
-                  <li>Metrics on flaky test quarantine and zero defect escape rate.</li>
-                  <li>Technical leadership driving PR review quality and testability.</li>
-                  <li>Cloud-native test orchestration on AWS ECS/Fargate and GitHub Actions.</li>
-                </ul>
-              </div>
-            </div>
-
-            <!-- Technical Anatomy of an ATS Parser -->
-            <div class="space-y-3">
-              <h3 class="text-base font-bold text-white flex items-center gap-2">
-                <i data-lucide="terminal" class="w-4 h-4 text-emerald-400"></i>
-                2. Inside the ATS Parsing Engine (Greenhouse, Lever, Workday)
-              </h3>
-              <p class="text-xs text-slate-300 leading-relaxed font-normal">
-                Applicant Tracking Systems do not read your resume with human intuition. They utilize deterministic text tokenizers and NLP entity extraction to build an internal relational record of your candidacy:
-              </p>
-              
-              <div class="bg-[#0b0f19] p-4 rounded-xl border border-slate-700/80 font-mono text-xs text-slate-200 space-y-2 overflow-x-auto shadow-inner leading-relaxed">
-                <div class="text-slate-400">// What Greenhouse / Lever extracts when parsing your PDF:</div>
-                <div><span class="text-purple-400 font-bold">entity_type</span>: <span class="text-amber-300 font-semibold">"TITLE"</span> &rarr; Extracted: <span class="text-emerald-400 font-bold">"Senior SDET"</span> <span class="text-slate-400">(Passes boolean query: SDET | "Software Development Engineer in Test")</span></div>
-                <div><span class="text-purple-400 font-bold">entity_type</span>: <span class="text-amber-300 font-semibold">"PRIMARY_STACK"</span> &rarr; Extracted: <span class="text-emerald-400 font-bold">["Playwright", "TypeScript", "Docker", "GitHub Actions"]</span></div>
-                <div><span class="text-purple-400 font-bold">entity_type</span>: <span class="text-amber-300 font-semibold">"METRIC_DENSITY"</span> &rarr; Found: <span class="text-emerald-400 font-bold">"65% CI runtime reduction", "0% defect escape rate"</span></div>
-                <div class="text-rose-400 font-semibold">// Fatal Error: Multi-column layouts break parser reading order, corrupting keyword tokens into gibberish.</div>
-              </div>
-            </div>
-
-            <!-- Interactive Widget: ATS Keyword & Stack Scanner -->
-            <div class="p-6 rounded-2xl bg-[#111827] border border-slate-700 space-y-4 shadow-xl">
-              <div class="flex items-center justify-between">
-                <h3 class="text-sm font-bold text-white flex items-center gap-2">
-                  <i data-lucide="scan" class="w-4 h-4 text-emerald-400"></i>
-                  Interactive Lab: SDET Keyword & Stack Alignment Scanner
-                </h3>
-                <button type="button" onclick="loadSampleJD()" class="text-xs font-bold text-emerald-400 hover:text-emerald-300 bg-emerald-950/60 hover:bg-emerald-900/80 px-3 py-1.5 rounded-lg border border-emerald-700/60 transition">
-                  Load Sample U.S. SDET JD
-                </button>
-              </div>
-              <p class="text-xs text-slate-300 font-normal">
-                Paste any U.S. Job Description (JD) below to extract core engineering keywords and calculate your alignment score in real time:
-              </p>
-              
-              <textarea id="jd-input" rows="5" class="w-full bg-[#0f172a] border border-slate-700 rounded-xl p-3 text-xs font-mono text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-emerald-500 transition" placeholder="Paste U.S. Job Description here..."></textarea>
-              
-              <div class="flex items-center justify-between">
-                <button type="button" onclick="analyzeJD()" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-black text-xs rounded-xl transition shadow-lg shadow-emerald-950/50 flex items-center gap-2">
-                  <i data-lucide="play" class="w-3.5 h-3.5 fill-current"></i> Analyze Stack & Extract Signals
-                </button>
-                <div id="jd-score" class="text-xs font-mono font-bold text-slate-200"></div>
-              </div>
-              
-              <div id="jd-results" class="hidden pt-3 border-t border-slate-800 text-xs space-y-2"></div>
-            </div>
-          </div>
-        
-</div>
+        var matchScore = Math.round((foundCount / coreKeywords.length) * 100);
+        scoreText.innerHTML = "ATS Alignment Score: <span style='color: " + (matchScore >= 70 ? "#34d399" : "#fbbf24") + "'>" + matchScore + "%</span> (" + foundCount + "/" + coreKeywords.length + " Core Signals Detected)";
+        resultsDiv.style.display = "block";
+      }
+    });
+  </script>
+</body>
+</html>
