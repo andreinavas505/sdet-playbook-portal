@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SDET Keyword & Stack Alignment Scanner | Global Tech Career</title>
+  <title>SDET ATS Resume vs JD Gap Scanner | Global Tech Career</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
@@ -13,6 +13,7 @@
       --border-dark: #1e293b;
       --cyan-bright: #22d3ee;
       --emerald-bright: #34d399;
+      --rose-bright: #fb7185;
     }
     body {
       background-color: #030712;
@@ -33,7 +34,8 @@
 </head>
 <body class="antialiased">
 
-  <div class="w-full max-w-3xl bg-[#090d16] border-2 border-cyan-500/70 rounded-2xl p-5 sm:p-7 shadow-2xl shadow-cyan-950/40 space-y-4">
+  <div class="w-full max-w-4xl bg-[#090d16] border-2 border-cyan-500/70 rounded-2xl p-5 sm:p-7 shadow-2xl shadow-cyan-950/40 space-y-4">
+    <!-- Header -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
       <div>
         <div class="flex items-center gap-2 mb-1">
@@ -42,72 +44,146 @@
           </span>
           <span class="text-xs text-slate-400 font-semibold">Global Tech Career</span>
         </div>
-        <h1 class="text-lg sm:text-xl font-bold text-white tracking-tight">SDET Keyword & Stack Alignment Scanner</h1>
-        <p class="text-xs text-slate-400">Evaluate technical keyword density against deterministic Greenhouse/Lever ATS parameters.</p>
+        <h1 class="text-lg sm:text-xl font-bold text-white tracking-tight">ATS Resume vs. Job Description Matcher</h1>
+        <p class="text-xs text-slate-400">Compares your resume against the target JD requirements to identify missing technical keywords.</p>
       </div>
-      <button onclick="loadSampleJD()" class="self-start sm:self-auto text-xs px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-slate-700 font-semibold transition flex items-center gap-1.5 flex-shrink-0">
-        <i class="fa-solid fa-file-import"></i> Load Sample JD
+      <button onclick="loadSampleData()" class="self-start sm:self-auto text-xs px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-slate-700 font-semibold transition flex items-center gap-1.5 flex-shrink-0">
+        <i class="fa-solid fa-file-import"></i> Load Sample Case
       </button>
     </div>
 
-    <div>
-      <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Target U.S. Job Description:</label>
-      <textarea id="jd-input" rows="5" class="w-full bg-[#030712] border border-slate-700 focus:border-cyan-400 rounded-xl p-3 text-xs text-white placeholder-slate-500 font-mono transition focus:outline-none custom-scroll" placeholder="Paste U.S. SDET Job Description here..."></textarea>
+    <!-- Dual Inputs Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+      <div>
+        <label class="block font-semibold text-slate-300 uppercase tracking-wider mb-1">
+          1. Target U.S. Job Description (JD):
+        </label>
+        <textarea id="jd-input" rows="6" class="w-full bg-[#030712] border border-slate-700 focus:border-cyan-400 rounded-xl p-3 text-xs text-white placeholder-slate-500 font-mono transition focus:outline-none custom-scroll" placeholder="Paste the target Job Description requirements here..."></textarea>
+      </div>
+
+      <div>
+        <label class="block font-semibold text-slate-300 uppercase tracking-wider mb-1">
+          2. Your Current Resume / Experience:
+        </label>
+        <textarea id="resume-input" rows="6" class="w-full bg-[#030712] border border-slate-700 focus:border-cyan-400 rounded-xl p-3 text-xs text-white placeholder-slate-500 font-mono transition focus:outline-none custom-scroll" placeholder="Paste your resume experience bullets or skills summary here..."></textarea>
+      </div>
     </div>
 
+    <!-- Action Buttons -->
     <div class="flex items-center gap-2.5">
-      <button onclick="analyzeJD()" class="px-5 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-bold transition shadow-lg shadow-cyan-500/20 flex items-center gap-2">
-        <i class="fa-solid fa-bolt"></i> Analyze Stack & Extract Signals
+      <button onclick="compareResumeToJD()" class="px-5 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-bold transition shadow-lg shadow-cyan-500/20 flex items-center gap-2">
+        <i class="fa-solid fa-code-compare"></i> Compare Resume vs. JD Signals
       </button>
-      <button onclick="clearJD()" class="px-3.5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 text-xs font-medium transition">
+      <button onclick="clearFields()" class="px-3.5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 text-xs font-medium transition">
         Clear
       </button>
     </div>
 
-    <div id="jd-results" class="hidden pt-4 border-t border-slate-800 space-y-3">
-      <div id="jd-score-banner" class="text-sm font-bold text-white"></div>
-      <div class="text-[11px] text-slate-400 font-semibold uppercase tracking-wider">Extracted Engineering Signals:</div>
-      <div id="jd-chips" class="flex flex-wrap gap-1.5"></div>
+    <!-- Results Panel -->
+    <div id="results-panel" class="hidden pt-4 border-t border-slate-800 space-y-4">
+      <div id="match-banner" class="text-sm font-bold text-white"></div>
+      
+      <!-- Matched Signals -->
+      <div>
+        <div class="text-[11px] text-emerald-400 font-bold uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+          <i class="fa-solid fa-circle-check"></i> Matched in Your Resume (ATS Passes):
+        </div>
+        <div id="matched-chips" class="flex flex-wrap gap-1.5"></div>
+      </div>
+
+      <!-- Missing Gaps -->
+      <div>
+        <div class="text-[11px] text-rose-400 font-bold uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+          <i class="fa-solid fa-triangle-exclamation"></i> Missing Gaps Required by JD (Action Needed):
+        </div>
+        <div id="missing-chips" class="flex flex-wrap gap-1.5"></div>
+      </div>
     </div>
   </div>
 
   <script>
     const sampleJD = `Senior SDET / Quality Automation Architect (Remote - US)
-Required:
-- 5+ years architecting test automation frameworks with TypeScript and Playwright.
-- Hands-on experience with API integration testing, Docker, and CI/CD pipelines (GitHub Actions).
-- Proven track record reducing flaky tests, test sharding, and improving release velocity.
-- Microservices, contract testing (Pact), performance (k6), and cloud infrastructure (AWS).`;
+Required Skills & Experience:
+- 5+ years designing modular test automation architectures with Playwright and TypeScript.
+- Strong proficiency in CI/CD pipelines (GitHub Actions, Docker) and test parallel sharding.
+- Experience with API Contract Testing using Pact and performance load testing with k6.
+- Proven track record reducing flaky tests, lowering defect escape rates, and optimizing runtime.
+- Solid background in Data Structures and Algorithms.`;
 
-    const coreTokens = ["Playwright", "TypeScript", "Python", "CI/CD", "GitHub Actions", "Docker", "Pact", "Contract Testing", "Sharding", "Parallel", "Flaky", "k6", "Performance", "Algorithms"];
+    const sampleResume = `SENIOR QA AUTOMATION ENGINEER
+- Built UI test automation suites using Playwright and TypeScript for web applications.
+- Integrated automated tests into GitHub Actions pipelines to run on pull requests.
+- Experience working with Docker containers for local test runs.
+- Reduced flaky test occurrences by implementing web-first assertions.`;
 
-    function loadSampleJD() {
+    // Standard list of SDET technical tokens to check
+    const dictionary = [
+      "Playwright", "TypeScript", "Python", "CI/CD", "GitHub Actions", 
+      "Docker", "Pact", "Contract Testing", "Sharding", "Parallel", 
+      "Flaky", "k6", "Performance", "Algorithms"
+    ];
+
+    function loadSampleData() {
       document.getElementById("jd-input").value = sampleJD;
-      analyzeJD();
+      document.getElementById("resume-input").value = sampleResume;
+      compareResumeToJD();
     }
-    function clearJD() {
+
+    function clearFields() {
       document.getElementById("jd-input").value = "";
-      document.getElementById("jd-results").classList.add("hidden");
+      document.getElementById("resume-input").value = "";
+      document.getElementById("results-panel").classList.add("hidden");
     }
-    function analyzeJD() {
-      const text = document.getElementById("jd-input").value.toLowerCase();
-      if (!text.trim()) { alert("Please paste a Job Description first."); return; }
-      let found = 0;
-      const chips = document.getElementById("jd-chips");
-      chips.innerHTML = "";
-      coreTokens.forEach(tok => {
-        const m = text.includes(tok.toLowerCase());
-        const span = document.createElement("span");
-        span.className = "px-2.5 py-1 rounded-md text-xs font-bold " + (m ? "bg-emerald-950 text-emerald-300 border border-emerald-600" : "bg-slate-900 text-slate-500 border border-slate-800");
-        span.innerText = (m ? "✓ " : "○ ") + tok;
-        chips.appendChild(span);
-        if (m) found++;
+
+    function compareResumeToJD() {
+      const jdText = document.getElementById("jd-input").value.toLowerCase();
+      const resumeText = document.getElementById("resume-input").value.toLowerCase();
+
+      if (!jdText.trim() || !resumeText.trim()) {
+        alert("Please provide both the Job Description and your Resume text to run the gap analysis.");
+        return;
+      }
+
+      // Step 1: Detect which tokens the JD actually requires
+      const jdRequired = dictionary.filter(token => jdText.includes(token.toLowerCase()));
+
+      if (jdRequired.length === 0) {
+        alert("No standard SDET keyword tokens detected in the JD text. Try pasting a full technical job description.");
+        return;
+      }
+
+      // Step 2: Check which of those required tokens are present in the Resume
+      const matched = [];
+      const missing = [];
+
+      jdRequired.forEach(token => {
+        if (resumeText.includes(token.toLowerCase())) {
+          matched.push(token);
+        } else {
+          missing.push(token);
+        }
       });
-      const score = Math.round((found / coreTokens.length) * 100);
-      document.getElementById("jd-score-banner").innerHTML = `ATS Alignment Match: <span class="${score >= 70 ? 'text-emerald-400' : 'text-amber-400'} font-extrabold text-base">${score}%</span> (${found}/${coreTokens.length} Signals Detected)`;
-      document.getElementById("jd-results").classList.remove("hidden");
+
+      const score = Math.round((matched.length / jdRequired.length) * 100);
+
+      // Render Score Banner
+      const banner = document.getElementById("match-banner");
+      banner.innerHTML = `ATS Resume Alignment: <span class="${score >= 75 ? 'text-emerald-400' : (score >= 50 ? 'text-amber-400' : 'text-rose-400')} font-black text-base">${score}%</span> (${matched.length}/${jdRequired.length} Required Signals Found in Your Resume)`;
+
+      // Render Matched Chips
+      const matchedBox = document.getElementById("matched-chips");
+      matchedBox.innerHTML = matched.length > 0 
+        ? matched.map(t => `<span class="px-2.5 py-1 rounded-md text-xs font-bold bg-emerald-950 text-emerald-300 border border-emerald-600">✓ ${t}</span>`).join('')
+        : `<span class="text-xs text-slate-500 italic">None of the required tokens were detected in your resume.</span>`;
+
+      // Render Missing Chips
+      const missingBox = document.getElementById("missing-chips");
+      missingBox.innerHTML = missing.length > 0
+        ? missing.map(t => `<span class="px-2.5 py-1 rounded-md text-xs font-bold bg-rose-950/60 text-rose-300 border border-rose-800">✕ ${t}</span>`).join('')
+        : `<span class="text-xs text-emerald-400 font-bold italic">Perfect Match! All JD required signals are present in your resume.</span>`;
+
+      document.getElementById("results-panel").classList.remove("hidden");
     }
   </script>
-
 </body>
 </html>
