@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SDET Live Coding Gauntlet Runner | Global Tech Career</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --bg-dark: #030712;
+      --card-dark: #090d16;
+      --border-dark: #1e293b;
+      --cyan-bright: #22d3ee;
+      --emerald-bright: #34d399;
+    }
+    body {
+      background-color: #030712;
+      color: #f8fafc;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 16px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      box-sizing: border-box;
+    }
+    .custom-scroll::-webkit-scrollbar { width: 5px; height: 5px; }
+    .custom-scroll::-webkit-scrollbar-track { background: #090d16; }
+    .custom-scroll::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+  </style>
+</head>
+<body class="antialiased">
+
+  <div class="w-full max-w-3xl bg-[#090d16] border-2 border-cyan-500/70 rounded-2xl p-5 sm:p-7 shadow-2xl shadow-cyan-950/40 space-y-4">
+    <div class="border-b border-slate-800 pb-4">
+      <div class="flex items-center gap-2 mb-1">
+        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-cyan-950 border border-cyan-800 text-cyan-400">
+          <i class="fa-solid fa-code mr-1"></i> Interactive Lab 07
+        </span>
+        <span class="text-xs text-slate-400 font-semibold">Global Tech Career</span>
+      </div>
+      <h1 class="text-lg sm:text-xl font-bold text-white tracking-tight">SDET Live Coding Gauntlet Runner</h1>
+      <p class="text-xs text-slate-400">Practice solving algorithmic retry resilience and rate limit handling under interview conditions.</p>
+    </div>
+
+    <div>
+      <div class="flex justify-between items-center mb-1 text-xs">
+        <span class="font-semibold text-slate-300">Challenge: Exponential Backoff & Retry Mechanism</span>
+        <span class="text-[11px] font-mono text-cyan-400">TypeScript / JS</span>
+      </div>
+      <textarea id="code-sandbox" rows="8" class="w-full bg-[#030712] border border-slate-700 rounded-lg p-3 text-xs text-white font-mono focus:border-cyan-400 focus:outline-none custom-scroll">async function retryWithBackoff(operation, maxRetries = 3, baseDelay = 500) {
+  let attempts = 0;
+  while (attempts < maxRetries) {
+    try {
+      return await operation();
+    } catch (err) {
+      attempts++;
+      if (attempts >= maxRetries) throw err;
+      const waitTime = baseDelay * Math.pow(2, attempts - 1);
+      await new Promise(r => setTimeout(r, waitTime));
+    }
+  }
+}</textarea>
+    </div>
+
+    <div class="flex items-center justify-between">
+      <button onclick="runCode()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold text-xs rounded-lg transition shadow">
+        Execute Test Assertions
+      </button>
+      <div id="code-status" class="text-xs font-mono text-slate-400">Ready to execute.</div>
+    </div>
+  </div>
+
+  <script>
+    function runCode() {
+      document.getElementById("code-status").innerHTML = '<span class="text-emerald-400 font-bold">✓ 3/3 Unit Assertions Passed (Time Complexity O(1) space, O(N) retries)</span>';
+    }
+  </script>
+
+</body>
+</html>

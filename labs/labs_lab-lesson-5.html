@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CI/CD Matrix Sharding Simulator | Global Tech Career</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --bg-dark: #030712;
+      --card-dark: #090d16;
+      --border-dark: #1e293b;
+      --cyan-bright: #22d3ee;
+      --emerald-bright: #34d399;
+    }
+    body {
+      background-color: #030712;
+      color: #f8fafc;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 16px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      box-sizing: border-box;
+    }
+    .custom-scroll::-webkit-scrollbar { width: 5px; height: 5px; }
+    .custom-scroll::-webkit-scrollbar-track { background: #090d16; }
+    .custom-scroll::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+  </style>
+</head>
+<body class="antialiased">
+
+  <div class="w-full max-w-3xl bg-[#090d16] border-2 border-cyan-500/70 rounded-2xl p-5 sm:p-7 shadow-2xl shadow-cyan-950/40 space-y-4">
+    <div class="border-b border-slate-800 pb-4">
+      <div class="flex items-center gap-2 mb-1">
+        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-cyan-950 border border-cyan-800 text-cyan-400">
+          <i class="fa-solid fa-network-wired mr-1"></i> Interactive Lab 05
+        </span>
+        <span class="text-xs text-slate-400 font-semibold">Global Tech Career</span>
+      </div>
+      <h1 class="text-lg sm:text-xl font-bold text-white tracking-tight">CI/CD Matrix Sharding Simulator</h1>
+      <p class="text-xs text-slate-400">Simulate distributed test execution acceleration across parallel GitHub Actions runners.</p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+      <div>
+        <label class="block font-semibold text-slate-300 mb-1">Total Test Count:</label>
+        <input type="number" id="s-tests" value="480" oninput="calcShards()" class="w-full bg-[#030712] border border-slate-700 rounded-lg p-2 text-white focus:border-cyan-400 focus:outline-none">
+      </div>
+      <div>
+        <label class="block font-semibold text-slate-300 mb-1">Avg Test Duration (sec):</label>
+        <input type="number" id="s-dur" value="12" oninput="calcShards()" class="w-full bg-[#030712] border border-slate-700 rounded-lg p-2 text-white focus:border-cyan-400 focus:outline-none">
+      </div>
+      <div>
+        <label class="block font-semibold text-slate-300 mb-1">Parallel Shards (Containers):</label>
+        <input type="number" id="s-shards" value="6" oninput="calcShards()" class="w-full bg-[#030712] border border-slate-700 rounded-lg p-2 text-white focus:border-cyan-400 focus:outline-none">
+      </div>
+    </div>
+
+    <div class="bg-[#030712] border border-slate-800 rounded-xl p-4 space-y-3">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+        <div>
+          <span class="text-xs text-slate-400">Sequential Execution:</span>
+          <div id="seq-time" class="text-lg font-bold text-rose-400">96 mins</div>
+        </div>
+        <div class="text-slate-600 hidden sm:block text-xl">→</div>
+        <div>
+          <span class="text-xs text-slate-400">Sharded Execution:</span>
+          <div id="shard-time" class="text-lg font-bold text-emerald-400">16 mins</div>
+        </div>
+        <div>
+          <span class="text-xs text-slate-400">Velocity Gain:</span>
+          <div id="gain-pct" class="text-lg font-extrabold text-cyan-400">83.3% Faster</div>
+        </div>
+      </div>
+      <div class="text-xs font-mono bg-[#090d16] p-2.5 rounded border border-slate-800 text-slate-300">
+        CLI Flag: <span class="text-cyan-300">npx playwright test --shard=${{ matrix.shard }}/6</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function calcShards() {
+      const tests = parseInt(document.getElementById("s-tests").value) || 0;
+      const dur = parseInt(document.getElementById("s-dur").value) || 0;
+      const shards = parseInt(document.getElementById("s-shards").value) || 1;
+      const totalSec = tests * dur;
+      const seqMin = Math.round(totalSec / 60);
+      const shardMin = Math.round((totalSec / shards) / 60);
+      const pct = Math.round((1 - (shardMin / (seqMin || 1))) * 100);
+
+      document.getElementById("seq-time").innerText = `${seqMin} mins`;
+      document.getElementById("shard-time").innerText = `${shardMin} mins`;
+      document.getElementById("gain-pct").innerText = `${pct}% Faster`;
+    }
+    calcShards();
+  </script>
+
+</body>
+</html>
