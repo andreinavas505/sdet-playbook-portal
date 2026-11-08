@@ -3,1025 +3,87 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>The SDET & Test Automation Job Search Playbook | Global Tech Career</title>
+  <title>SDET Keyword & Stack Alignment Scanner | Global Tech Career</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    :root {
-      --bg-dark: #030712;
-      --card-dark: #0f172a;
-      --border-dark: #1e293b;
-      --cyan-primary: #06b6d4;
-      --cyan-bright: #22d3ee;
-      --emerald-bright: #34d399;
-    }
     body {
       background-color: #030712;
       color: #f8fafc;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
-    .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-    .custom-scrollbar::-webkit-scrollbar-track { background: #030712; }
-    .custom-scrollbar::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
-    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #334155; }
-    .chip { transition: all 0.2s ease; cursor: pointer; }
-    .chip:hover { transform: translateY(-1px); }
   </style>
 </head>
-<body class="min-h-screen flex flex-col md:flex-row bg-[#030712] text-slate-100 antialiased">
+<body class="min-h-screen bg-[#030712] flex items-center justify-center p-4 md:p-8 antialiased">
 
-  <!-- Toast Notification -->
-  <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none bg-cyan-950 border border-cyan-400 text-cyan-200 px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3">
-    <i class="fa-solid fa-circle-check text-cyan-400 text-lg"></i>
-    <span id="toast-msg" class="text-sm font-semibold tracking-wide">Copied to clipboard</span>
+  <!-- Interactive Lab Card (Standalone) -->
+  <div class="w-full max-w-4xl bg-[#090d16] border-2 border-cyan-500/70 rounded-2xl p-6 md:p-8 shadow-2xl shadow-cyan-950/50 space-y-5">
+    
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-5">
+      <div>
+        <div class="flex items-center gap-2 mb-1.5">
+          <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest bg-cyan-950 border border-cyan-800 text-cyan-400">
+            <i class="fa-solid fa-flask mr-1"></i> Interactive Lab Station
+          </span>
+          <span class="text-xs text-slate-400 font-semibold">Global Tech Career</span>
+        </div>
+        <h1 class="text-xl md:text-2xl font-black text-white tracking-tight">
+          SDET Keyword & Stack Alignment Scanner
+        </h1>
+        <p class="text-xs text-slate-300 mt-1">
+          Paste any target U.S. Job Description below to evaluate your technical keywords against deterministic ATS filter expectations.
+        </p>
+      </div>
+
+      <button onclick="loadSampleJD()" class="self-start sm:self-auto text-xs px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-slate-700 font-bold transition-all shadow-sm flex items-center gap-2 flex-shrink-0">
+        <i class="fa-solid fa-file-import"></i> Load Sample U.S. SDET JD
+      </button>
+    </div>
+
+    <!-- Input Box -->
+    <div class="space-y-2">
+      <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider">
+        Target Job Description (JD):
+      </label>
+      <textarea id="jd-input-box" rows="8" class="w-full bg-[#030712] border border-slate-700 focus:border-cyan-400 rounded-xl p-4 text-xs text-white placeholder-slate-500 font-mono transition-all focus:outline-none" placeholder="Paste U.S. SDET Job Description here or click 'Load Sample' above..."></textarea>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="flex items-center gap-3">
+      <button onclick="runJDAnalysis()" class="px-6 py-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-black tracking-wide transition-all shadow-lg shadow-cyan-500/25 flex items-center gap-2">
+        <i class="fa-solid fa-bolt"></i> Analyze Stack & Extract Signals
+      </button>
+      <button onclick="clearJDInput()" class="px-4 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-slate-200 text-xs font-semibold transition-all">
+        Clear
+      </button>
+    </div>
+
+    <!-- Results Panel -->
+    <div id="jd-results-panel" class="hidden pt-5 border-t border-slate-800 space-y-4">
+      <div id="jd-score-banner" class="text-base font-bold text-white"></div>
+      
+      <div>
+        <div class="text-xs text-slate-400 font-semibold mb-2 uppercase tracking-wider">
+          Extracted Engineering Signals:
+        </div>
+        <div id="jd-chips-container" class="flex flex-wrap gap-2"></div>
+      </div>
+    </div>
+
   </div>
 
-  <!-- Sidebar Navigation -->
-  <aside class="w-full md:w-80 bg-[#090d16] border-r border-slate-800 flex flex-col flex-shrink-0 md:h-screen sticky top-0 z-30">
-    <!-- Brand Header -->
-    <div class="p-5 border-b border-slate-800 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center font-black text-white text-base shadow-lg shadow-cyan-500/20">
-          GTC
-        </div>
-        <div>
-          <h1 class="text-sm font-bold text-white tracking-tight uppercase leading-tight">Global Tech Career</h1>
-          <p class="text-xs text-cyan-400 font-medium">SDET & QE Playbook</p>
-        </div>
-      </div>
-      <span class="text-[10px] uppercase font-bold bg-cyan-950/80 border border-cyan-800/80 text-cyan-300 px-2 py-0.5 rounded-full">v2026</span>
-    </div>
-
-    <!-- Curriculum Navigation -->
-    <div class="p-4 flex-1 overflow-y-auto custom-scrollbar space-y-6">
-      
-      <!-- Module 1 -->
-      <div>
-        <div class="flex items-center justify-between text-[11px] font-bold tracking-wider text-slate-400 uppercase mb-2">
-          <span>Module 01: Alignment</span>
-          <span class="text-cyan-400">2 Lessons</span>
-        </div>
-        <div class="space-y-1.5">
-          <button onclick="switchLesson(1)" id="nav-btn-1" class="w-full text-left p-3 rounded-lg text-xs font-semibold flex items-center justify-between transition-all bg-cyan-950/60 border border-cyan-500/40 text-cyan-200 shadow-sm">
-            <span class="flex items-center gap-2.5">
-              <span class="w-5 h-5 rounded-full bg-cyan-500/20 text-cyan-300 flex items-center justify-center text-[11px] font-bold">1</span>
-              <span>Target Role & ATS Architecture</span>
-            </span>
-            <span class="text-[9px] bg-emerald-950 border border-emerald-600/60 text-emerald-300 px-1.5 py-0.5 rounded font-black tracking-wide">FREE</span>
-          </button>
-
-          <button onclick="switchLesson(2)" id="nav-btn-2" class="w-full text-left p-3 rounded-lg text-xs font-medium flex items-center justify-between transition-all hover:bg-slate-800/60 text-slate-300">
-            <span class="flex items-center gap-2.5">
-              <span class="w-5 h-5 rounded-full bg-slate-800 text-slate-400 flex items-center justify-center text-[11px] font-bold">2</span>
-              <span>Flaky Test Elimination ROI</span>
-            </span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Module 2 -->
-      <div>
-        <div class="flex items-center justify-between text-[11px] font-bold tracking-wider text-slate-400 uppercase mb-2">
-          <span>Module 02: Resume & LinkedIn</span>
-          <span class="text-cyan-400">2 Lessons</span>
-        </div>
-        <div class="space-y-1.5">
-          <button onclick="switchLesson(3)" id="nav-btn-3" class="w-full text-left p-3 rounded-lg text-xs font-medium flex items-center justify-between transition-all hover:bg-slate-800/60 text-slate-300">
-            <span class="flex items-center gap-2.5">
-              <span class="w-5 h-5 rounded-full bg-slate-800 text-slate-400 flex items-center justify-center text-[11px] font-bold">3</span>
-              <span>CAR-M Resume Bullet Formula</span>
-            </span>
-          </button>
-
-          <button onclick="switchLesson(4)" id="nav-btn-4" class="w-full text-left p-3 rounded-lg text-xs font-medium flex items-center justify-between transition-all hover:bg-slate-800/60 text-slate-300">
-            <span class="flex items-center gap-2.5">
-              <span class="w-5 h-5 rounded-full bg-slate-800 text-slate-400 flex items-center justify-center text-[11px] font-bold">4</span>
-              <span>7-Prompt LinkedIn Inbound</span>
-            </span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Module 3 -->
-      <div>
-        <div class="flex items-center justify-between text-[11px] font-bold tracking-wider text-slate-400 uppercase mb-2">
-          <span>Module 03: Architecture & Loops</span>
-          <span class="text-cyan-400">3 Lessons</span>
-        </div>
-        <div class="space-y-1.5">
-          <button onclick="switchLesson(5)" id="nav-btn-5" class="w-full text-left p-3 rounded-lg text-xs font-medium flex items-center justify-between transition-all hover:bg-slate-800/60 text-slate-300">
-            <span class="flex items-center gap-2.5">
-              <span class="w-5 h-5 rounded-full bg-slate-800 text-slate-400 flex items-center justify-center text-[11px] font-bold">5</span>
-              <span>CI/CD Sharding & Parallel Matrix</span>
-            </span>
-          </button>
-
-          <button onclick="switchLesson(6)" id="nav-btn-6" class="w-full text-left p-3 rounded-lg text-xs font-medium flex items-center justify-between transition-all hover:bg-slate-800/60 text-slate-300">
-            <span class="flex items-center gap-2.5">
-              <span class="w-5 h-5 rounded-full bg-slate-800 text-slate-400 flex items-center justify-center text-[11px] font-bold">6</span>
-              <span>API Contract Testing (Pact)</span>
-            </span>
-          </button>
-
-          <button onclick="switchLesson(7)" id="nav-btn-7" class="w-full text-left p-3 rounded-lg text-xs font-medium flex items-center justify-between transition-all hover:bg-slate-800/60 text-slate-300">
-            <span class="flex items-center gap-2.5">
-              <span class="w-5 h-5 rounded-full bg-slate-800 text-slate-400 flex items-center justify-center text-[11px] font-bold">7</span>
-              <span>SDET Live Coding Gauntlet</span>
-            </span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Module 4 -->
-      <div>
-        <div class="flex items-center justify-between text-[11px] font-bold tracking-wider text-slate-400 uppercase mb-2">
-          <span>Module 04: Offer & Strategy</span>
-          <span class="text-cyan-400">2 Lessons</span>
-        </div>
-        <div class="space-y-1.5">
-          <button onclick="switchLesson(8)" id="nav-btn-8" class="w-full text-left p-3 rounded-lg text-xs font-medium flex items-center justify-between transition-all hover:bg-slate-800/60 text-slate-300">
-            <span class="flex items-center gap-2.5">
-              <span class="w-5 h-5 rounded-full bg-slate-800 text-slate-400 flex items-center justify-center text-[11px] font-bold">8</span>
-              <span>U.S. Total Comp & RSU Math</span>
-            </span>
-          </button>
-
-          <button onclick="switchLesson(9)" id="nav-btn-9" class="w-full text-left p-3 rounded-lg text-xs font-medium flex items-center justify-between transition-all hover:bg-slate-800/60 text-slate-300">
-            <span class="flex items-center gap-2.5">
-              <span class="w-5 h-5 rounded-full bg-slate-800 text-slate-400 flex items-center justify-center text-[11px] font-bold">9</span>
-              <span>The 90-Day Sprint & Pipeline</span>
-            </span>
-          </button>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- User & Role Footer -->
-    <div class="p-4 border-t border-slate-800 bg-[#060a12] text-xs flex items-center justify-between">
-      <div class="flex items-center gap-2.5">
-        <div class="w-8 h-8 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-cyan-400 font-bold">
-          HM
-        </div>
-        <div>
-          <div class="font-bold text-slate-200">Hiring Manager Suite</div>
-          <div class="text-[10px] text-slate-400">$130k - $190k+ USD Market</div>
-        </div>
-      </div>
-      <a href="https://globaltechcareer.com" target="_blank" class="text-slate-400 hover:text-cyan-300 text-xs">
-        <i class="fa-solid fa-arrow-up-right-from-square"></i>
-      </a>
-    </div>
-  </aside>
-
-  <!-- Main Content Area -->
-  <main class="flex-1 flex flex-col md:h-screen overflow-y-auto custom-scrollbar">
-
-    <!-- Top Publisher Bar (Hotmart Hub) -->
-    <header class="bg-[#090d16] border-b border-slate-800 p-4 sticky top-0 z-20 shadow-md">
-      <div class="max-w-5xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-        <div class="flex items-center gap-2.5">
-          <span class="px-2.5 py-1 rounded-md text-[11px] font-black tracking-wider uppercase bg-cyan-950 text-cyan-300 border border-cyan-800/80">
-            Hotmart Hub
-          </span>
-          <span id="top-lesson-indicator" class="text-xs text-slate-300 font-semibold truncate">
-            Lesson 01 &bull; Target Role & Quality Framework Alignment
-          </span>
-        </div>
-
-        <!-- Quick 1-Click Action Buttons -->
-        <div class="flex items-center flex-wrap gap-2 w-full sm:w-auto">
-          <button onclick="copyCurrentModuleTitle()" class="text-xs px-2.5 py-1.5 rounded-md bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-medium flex items-center gap-1.5">
-            <i class="fa-solid fa-folder-closed text-cyan-400"></i> Module Name
-          </button>
-
-          <button onclick="copyCurrentLessonTitle()" class="text-xs px-2.5 py-1.5 rounded-md bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-medium flex items-center gap-1.5">
-            <i class="fa-solid fa-file-lines text-cyan-400"></i> Lesson Name
-          </button>
-
-          <button onclick="copyCleanHotmartHTML()" class="text-xs px-2.5 py-1.5 rounded-md bg-cyan-600 hover:bg-cyan-500 text-slate-950 font-bold flex items-center gap-1.5 shadow-sm">
-            <i class="fa-solid fa-code"></i> Copy Clean HTML (&lt;&gt;)
-          </button>
-        </div>
-      </div>
-
-      <!-- Tag Pills Strip (1-by-1 copy) -->
-      <div class="max-w-5xl mx-auto mt-3 pt-3 border-t border-slate-800/80 flex flex-wrap items-center gap-2">
-        <span class="text-[11px] text-slate-400 font-semibold uppercase tracking-wider flex items-center gap-1">
-          <i class="fa-solid fa-tags text-cyan-400"></i> Tags (Click to copy 1-by-1):
-        </span>
-        <div id="tag-chips-container" class="flex flex-wrap gap-1.5">
-          <!-- Dynamically populated tags -->
-        </div>
-        <button onclick="copyAllCurrentTags()" class="text-[11px] text-cyan-400 hover:text-cyan-300 underline font-semibold ml-auto">
-          Copy All Tags (CSV)
-        </button>
-      </div>
-
-      <!-- Image Prompts Strip -->
-      <div class="max-w-5xl mx-auto mt-2 pt-2 border-t border-slate-800/40 flex items-center gap-2">
-        <span class="text-[11px] text-amber-400 font-semibold flex items-center gap-1">
-          <i class="fa-solid fa-image"></i> 16:9 Image Prompts:
-        </span>
-        <button onclick="copyModuleImagePrompt()" class="text-[11px] px-2 py-0.5 rounded bg-slate-900 border border-slate-700 text-slate-300 hover:text-white hover:border-amber-400 flex items-center gap-1">
-          Module Image Prompt
-        </button>
-        <button onclick="copyLessonImagePrompt()" class="text-[11px] px-2 py-0.5 rounded bg-slate-900 border border-slate-700 text-slate-300 hover:text-white hover:border-amber-400 flex items-center gap-1">
-          Lesson Image Prompt
-        </button>
-      </div>
-    </header>
-
-    <!-- Lesson Content Body -->
-    <div class="max-w-5xl mx-auto p-6 md:p-10 w-full space-y-8">
-      
-      <!-- Lesson Header & Tabs -->
-      <div class="border-b border-slate-800 pb-6">
-        <div class="flex flex-wrap items-center gap-3 mb-2">
-          <span id="lesson-module-badge" class="px-2.5 py-0.5 rounded-full text-xs font-bold tracking-wide uppercase bg-cyan-950 border border-cyan-800 text-cyan-300">
-            Module 01
-          </span>
-          <span id="lesson-free-badge" class="px-2 py-0.5 rounded-full text-[10px] font-black tracking-widest uppercase bg-emerald-950 border border-emerald-600 text-emerald-400">
-            Free Preview / Lead Magnet
-          </span>
-        </div>
-        <h2 id="lesson-title" class="text-2xl md:text-3xl font-extrabold text-white tracking-tight">
-          Target Role & Quality Framework Alignment
-        </h2>
-        <p id="lesson-subtitle" class="text-sm md:text-base text-slate-400 mt-2">
-          Deconstructing U.S. SDET job descriptions, mapping test automation stacks, and passing deterministic ATS filters.
-        </p>
-
-        <!-- View Tabs -->
-        <div class="flex items-center gap-3 mt-6">
-          <button onclick="setActiveTab('core')" id="tab-core-btn" class="px-4 py-2 rounded-lg text-xs font-bold border transition-all bg-cyan-950 border-cyan-500 text-cyan-300">
-            <i class="fa-solid fa-book-open mr-1.5"></i> Core Lesson & Interactive Tools
-          </button>
-          <button onclick="setActiveTab('workbook')" id="tab-workbook-btn" class="px-4 py-2 rounded-lg text-xs font-bold border transition-all bg-slate-900 border-slate-700 text-slate-400 hover:text-slate-200">
-            <i class="fa-solid fa-pen-to-square mr-1.5"></i> Student Workbook, Lab & Prompts
-          </button>
-        </div>
-      </div>
-
-      <!-- Core Lesson View -->
-      <div id="view-core" class="space-y-8">
-        <div id="dynamic-core-content">
-          <!-- Dynamically populated from JS lesson database -->
-        </div>
-      </div>
-
-      <!-- Workbook View -->
-      <div id="view-workbook" class="space-y-8 hidden">
-        <div id="dynamic-workbook-content">
-          <!-- Dynamically populated from JS workbook database -->
-        </div>
-      </div>
-
-    </div>
-  </main>
-
-  <!-- Script Architecture -->
   <script>
-    // Master Lesson Data Store
-    var currentLessonNum = 1;
-    var currentTab = 'core';
+    var sampleJD = "Senior SDET / Quality Engineering Architect (Remote - US)\n\nRequirements:\n- 5+ years designing enterprise test automation frameworks using Playwright, TypeScript, and Docker.\n- Experience implementing CI/CD pipelines in GitHub Actions with test matrix sharding.\n- Background in API Contract Testing with Pact and performance validation with k6.\n- Track record eliminating flaky tests, reducing CI runtime, and lowering defect escape rates.\n- Strong proficiency in Data Structures and Algorithms.";
 
-    var lessonData = {
-      1: {
-        moduleNum: "MODULE 01",
-        moduleTitle: "Target Role & Quality Framework Alignment",
-        lessonTitle: "Deconstructing U.S. SDET JDs & ATS Parsing Architecture [FREE PREVIEW]",
-        subtitle: "How deterministic ATS engines (Greenhouse, Lever) parse your resume and why manual QA descriptions get rejected.",
-        tags: ["SDET", "Test Automation", "ATS Optimization", "Playwright", "TypeScript", "Resume Strategy", "Quality Engineering", "U.S. Tech Jobs"],
-        isFree: true,
-        coreHTML: `
-          <!-- Welcome & Curriculum Overview -->
-          <div class="bg-gradient-to-br from-cyan-950/40 to-slate-900 border border-cyan-500/30 rounded-2xl p-6 md:p-8">
-            <div class="flex items-center gap-3 mb-3">
-              <span class="w-8 h-8 rounded-lg bg-cyan-500/20 text-cyan-400 flex items-center justify-center font-bold text-sm">
-                <i class="fa-solid fa-compass"></i>
-              </span>
-              <h3 class="text-lg font-bold text-white">Welcome from the Hiring Manager</h3>
-            </div>
-            <p class="text-slate-300 text-sm leading-relaxed mb-4">
-              Welcome to the foundation of <strong class="text-white">The SDET & Test Automation Job Search Playbook</strong>. In the U.S. and tier-1 remote tech markets ($130,000 – $190,000+ USD), companies do not hire "testers who write scripts." They hire <strong class="text-cyan-300">Software Development Engineers in Test</strong> who treat test code with the same architectural rigor, performance benchmarks, and CI/CD concurrency as production systems.
-            </p>
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 text-xs pt-3 border-t border-slate-800">
-              <div class="bg-slate-900/80 p-3 rounded-lg border border-slate-800">
-                <div class="text-cyan-400 font-bold mb-1">Module 01</div>
-                <div class="text-slate-200">Role Alignment & Suite Auditing</div>
-              </div>
-              <div class="bg-slate-900/80 p-3 rounded-lg border border-slate-800">
-                <div class="text-cyan-400 font-bold mb-1">Module 02</div>
-                <div class="text-slate-200">CAR-M Resume & LinkedIn Recruiter Engine</div>
-              </div>
-              <div class="bg-slate-900/80 p-3 rounded-lg border border-slate-800">
-                <div class="text-cyan-400 font-bold mb-1">Module 03</div>
-                <div class="text-slate-200">Sharding, Contract Testing & Live Coding</div>
-              </div>
-              <div class="bg-slate-900/80 p-3 rounded-lg border border-slate-800">
-                <div class="text-cyan-400 font-bold mb-1">Module 04</div>
-                <div class="text-slate-200">U.S. Total Comp & 90-Day Sprint Kanban</div>
-              </div>
-            </div>
-          </div>
+    var coreTokens = [
+      "Playwright", "TypeScript", "Python", "CI/CD", "GitHub Actions", 
+      "Docker", "Pact", "Contract Testing", "Sharding", "Parallel", 
+      "Flaky", "k6", "Performance", "Algorithms"
+    ];
 
-          <!-- Section 1: Discarded vs. $160k+ Profile -->
-          <div class="space-y-4">
-            <h3 class="text-lg font-bold text-white flex items-center gap-2">
-              <span class="text-cyan-400">1.</span> Discarded QA Resume vs. $160k+ U.S. SDET Profile
-            </h3>
-            <p class="text-slate-300 text-sm leading-relaxed">
-              When an applicant tracking system or a technical recruiter scans your resume, they scan for <strong class="text-slate-100">engineering ownership</strong> rather than task execution.
-            </p>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div class="bg-[#180d12] border border-rose-900/60 rounded-xl p-5">
-                <div class="text-rose-400 font-bold text-xs uppercase tracking-wider mb-3 flex items-center gap-2">
-                  <i class="fa-solid fa-triangle-exclamation"></i> Discarded QA Resume Profile
-                </div>
-                <ul class="text-xs text-rose-200/90 space-y-2">
-                  <li class="flex items-start gap-2">
-                    <span class="text-rose-400 font-bold">&times;</span>
-                    <span>"Created test cases in TestRail and performed exploratory manual testing."</span>
-                  </li>
-                  <li class="flex items-start gap-2">
-                    <span class="text-rose-400 font-bold">&times;</span>
-                    <span>"Wrote automated UI regression test scripts using Selenium and Java."</span>
-                  </li>
-                  <li class="flex items-start gap-2">
-                    <span class="text-rose-400 font-bold">&times;</span>
-                    <span>Skills listed as arbitrary percentages (e.g. "Java 85%, Postman 90%").</span>
-                  </li>
-                  <li class="flex items-start gap-2">
-                    <span class="text-rose-400 font-bold">&times;</span>
-                    <span>No mention of execution time, flakiness quarantine, or CI/CD pipelines.</span>
-                  </li>
-                </ul>
-              </div>
-
-              <div class="bg-[#091a16] border border-emerald-900/60 rounded-xl p-5">
-                <div class="text-emerald-400 font-bold text-xs uppercase tracking-wider mb-3 flex items-center gap-2">
-                  <i class="fa-solid fa-circle-check"></i> $160k+ U.S. SDET Profile
-                </div>
-                <ul class="text-xs text-emerald-200/90 space-y-2">
-                  <li class="flex items-start gap-2">
-                    <span class="text-emerald-400 font-bold">&check;</span>
-                    <span>"Architected Playwright & TypeScript E2E suite, cutting CI run time from 48m to 11m."</span>
-                  </li>
-                  <li class="flex items-start gap-2">
-                    <span class="text-emerald-400 font-bold">&check;</span>
-                    <span>"Engineered automated flaky test quarantine reducing false positives by 94%."</span>
-                  </li>
-                  <li class="flex items-start gap-2">
-                    <span class="text-emerald-400 font-bold">&check;</span>
-                    <span>Implemented Pact consumer-driven contract testing preventing regression leaks.</span>
-                  </li>
-                  <li class="flex items-start gap-2">
-                    <span class="text-emerald-400 font-bold">&check;</span>
-                    <span>Integrated Dockerized test runners directly into GitHub Actions matrix sharding.</span>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-
-          <!-- Section 2: Inside the ATS Parser -->
-          <div class="space-y-4">
-            <h3 class="text-lg font-bold text-white flex items-center gap-2">
-              <span class="text-cyan-400">2.</span> Inside the ATS Parsing Engine (Greenhouse, Lever, Workday)
-            </h3>
-            <p class="text-slate-300 text-sm leading-relaxed">
-              Modern ATS systems use deterministic tokenization. Two-column Canva layouts or floating tables break reading order, corrupting keyword pairs into meaningless character strings.
-            </p>
-            <div class="bg-[#020617] border border-slate-800 rounded-xl p-4 font-mono text-xs text-cyan-300 leading-relaxed overflow-x-auto">
-// What Greenhouse & Lever parse into candidate database entities:
-entity_type: "TARGET_TITLE" &rarr; Extracted: "Senior SDET" | "Quality Engineering Architect"
-entity_type: "CORE_STACK"   &rarr; ["Playwright", "TypeScript", "Python", "Docker", "GitHub Actions"]
-entity_type: "METRIC_EVIDENCE" &rarr; ["65% CI runtime reduction", "0% defect escape rate", "94% flaky quarantine"]
-// Two-column layout fatal error: Left and right text lines are merged horizontally into gibberish.
-            </div>
-          </div>
-
-          <!-- Interactive Tool: ATS Keyword & Stack Alignment Scanner -->
-          <div class="bg-[#0d1526] border-2 border-cyan-500/60 rounded-2xl p-6 shadow-xl shadow-cyan-950/30 space-y-4">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div>
-                <span class="text-xs font-black uppercase tracking-wider text-cyan-400 flex items-center gap-1.5">
-                  <i class="fa-solid fa-flask"></i> Interactive Lab Station
-                </span>
-                <h4 class="text-base font-bold text-white">SDET Keyword & Stack Alignment Scanner</h4>
-              </div>
-              <button onclick="loadSampleJD()" class="text-xs px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-slate-700 font-semibold transition-all">
-                Load Sample U.S. SDET JD
-              </button>
-            </div>
-            
-            <p class="text-xs text-slate-300">
-              Paste any U.S. Job Description below to evaluate your tech keywords against top ATS filter expectations:
-            </p>
-
-            <textarea id="jd-input-box" rows="5" class="w-full bg-[#030712] border border-slate-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-cyan-400 font-mono transition-all" placeholder="Paste U.S. SDET Job Description here..."></textarea>
-
-            <div class="flex items-center gap-3">
-              <button onclick="runJDAnalysis()" class="px-5 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-bold transition-all shadow-md flex items-center gap-2">
-                <i class="fa-solid fa-bolt"></i> Analyze Stack & Extract Signals
-              </button>
-              <button onclick="clearJDInput()" class="px-3 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 text-xs font-medium">
-                Clear
-              </button>
-            </div>
-
-            <!-- Analysis Output -->
-            <div id="jd-results-panel" class="hidden pt-4 border-t border-slate-800 space-y-3">
-              <div id="jd-score-banner" class="text-sm font-bold text-white"></div>
-              <div class="text-xs text-slate-400 font-medium">Extracted Engineering Signals:</div>
-              <div id="jd-chips-container" class="flex flex-wrap gap-2"></div>
-            </div>
-          </div>
-        `,
-        workbookHTML: `
-          <div class="space-y-6">
-            <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
-              <h3 class="text-base font-bold text-white mb-2 flex items-center gap-2">
-                <i class="fa-solid fa-pen-clip text-cyan-400"></i> Exercise 1.1: 3-Column JD Extraction Matrix
-              </h3>
-              <p class="text-xs text-slate-300 leading-relaxed mb-4">
-                Select 3 target U.S. SDET job postings ($130k+). Extract their core requirements into three architectural pillars:
-              </p>
-              
-              <div class="space-y-3">
-                <div>
-                  <label class="block text-xs font-semibold text-slate-300 mb-1">1. Test Architecture & Framework Stack (e.g., Playwright, TypeScript, Page Object vs. Screenplay):</label>
-                  <textarea id="wb-1-q1" oninput="saveNote(1, 'q1', this.value)" rows="2" class="w-full bg-[#020617] border border-slate-700 rounded-lg p-2.5 text-xs text-white focus:border-cyan-400" placeholder="List extracted frameworks and design patterns..."></textarea>
-                </div>
-                <div>
-                  <label class="block text-xs font-semibold text-slate-300 mb-1">2. CI/CD & Infrastructure Requirements (e.g., Docker, GitHub Actions, Matrix Sharding, AWS):</label>
-                  <textarea id="wb-1-q2" oninput="saveNote(1, 'q2', this.value)" rows="2" class="w-full bg-[#020617] border border-slate-700 rounded-lg p-2.5 text-xs text-white focus:border-cyan-400" placeholder="List infrastructure and pipeline tools..."></textarea>
-                </div>
-                <div>
-                  <label class="block text-xs font-semibold text-slate-300 mb-1">3. Expected Velocity & Reliability Metrics (e.g., Flaky quarantine %, Execution time SLA):</label>
-                  <textarea id="wb-1-q3" oninput="saveNote(1, 'q3', this.value)" rows="2" class="w-full bg-[#020617] border border-slate-700 rounded-lg p-2.5 text-xs text-white focus:border-cyan-400" placeholder="List business impact and quality metrics..."></textarea>
-                </div>
-              </div>
-            </div>
-
-            <!-- AI Prompt Card -->
-            <div class="bg-cyan-950/30 border border-cyan-800/60 rounded-xl p-5 space-y-3">
-              <div class="flex items-center justify-between">
-                <span class="text-xs font-bold text-cyan-300 uppercase tracking-wider flex items-center gap-1.5">
-                  <i class="fa-solid fa-robot"></i> Copy-Ready AI JD Auditor Prompt
-                </span>
-                <button onclick="copySnippet('prompt-1')" class="text-xs text-cyan-400 hover:text-cyan-200 font-semibold">
-                  <i class="fa-regular fa-copy"></i> Copy Prompt
-                </button>
-              </div>
-              <pre id="prompt-1" class="bg-[#020617] p-3 rounded-lg text-xs font-mono text-slate-300 overflow-x-auto whitespace-pre-wrap">Act as a U.S. Staff SDET Hiring Manager. I am pasting a target Job Description and my current resume summary. Analyze my profile against tier-1 U.S. quality engineering expectations ($140k-$180k USD).
-1. Identify missing hard technical keywords (frameworks, CI sharding, contract testing).
-2. Rewrite my headline to match Greenhouse ATS boolean recruiter queries.
-3. Highlight 3 bullet points that sound like manual QA and translate them into software engineering outcomes.</pre>
-            </div>
-          </div>
-        `
-      },
-      2: {
-        moduleNum: "MODULE 01",
-        moduleTitle: "Target Role & Quality Framework Alignment",
-        lessonTitle: "Test Suite Auditing, Flaky Test Elimination & Engineering Waste ROI",
-        subtitle: "How to quantify the engineering cost of non-deterministic tests and architect automated quarantine policies.",
-        tags: ["Flaky Tests", "Test Quarantine", "ROI Math", "CI/CD Stability", "Quality Gates", "SDET Metrics"],
-        isFree: false,
-        coreHTML: `
-          <div class="space-y-4">
-            <h3 class="text-lg font-bold text-white flex items-center gap-2">
-              <span class="text-cyan-400">1.</span> The Real Cost of Flaky Tests in U.S. Engineering Teams
-            </h3>
-            <p class="text-slate-300 text-sm leading-relaxed">
-              In high-velocity engineering organizations, flaky tests are not an inconvenience; they are an expensive operational drain that halts deployment pipelines and destroys developer trust in test automation.
-            </p>
-
-            <!-- Interactive Flaky Test Cost Simulator -->
-            <div class="bg-[#0d1526] border-2 border-cyan-500/60 rounded-2xl p-6 space-y-4">
-              <div class="flex items-center justify-between">
-                <span class="text-xs font-black uppercase tracking-wider text-cyan-400 flex items-center gap-1.5">
-                  <i class="fa-solid fa-calculator"></i> Flaky Test Engineering Waste Simulator
-                </span>
-                <span class="text-xs text-slate-400">Based on U.S. Engineering Rates</span>
-              </div>
-
-              <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div>
-                  <label class="block text-xs font-semibold text-slate-300 mb-1">Number of Developers:</label>
-                  <input type="number" id="calc-devs" value="25" oninput="calculateFlakyROI()" class="w-full bg-[#030712] border border-slate-700 rounded-lg p-2.5 text-xs text-white focus:border-cyan-400">
-                </div>
-                <div>
-                  <label class="block text-xs font-semibold text-slate-300 mb-1">Hours Lost per Dev / Week:</label>
-                  <input type="number" id="calc-hours" value="3.5" step="0.5" oninput="calculateFlakyROI()" class="w-full bg-[#030712] border border-slate-700 rounded-lg p-2.5 text-xs text-white focus:border-cyan-400">
-                </div>
-                <div>
-                  <label class="block text-xs font-semibold text-slate-300 mb-1">Avg. Dev Hourly Rate ($):</label>
-                  <input type="number" id="calc-rate" value="85" oninput="calculateFlakyROI()" class="w-full bg-[#030712] border border-slate-700 rounded-lg p-2.5 text-xs text-white focus:border-cyan-400">
-                </div>
-              </div>
-
-              <div class="bg-[#020617] border border-slate-800 rounded-xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-                <div>
-                  <div class="text-xs text-slate-400">Estimated Annual Waste to Organization:</div>
-                  <div id="calc-annual-cost" class="text-2xl font-black text-rose-400">$386,750 USD / year</div>
-                </div>
-                <div class="text-xs text-slate-300 max-w-sm">
-                  <strong class="text-emerald-400">Interview Talking Point:</strong> "By implementing automated test retries with quarantine gates, I reclaimed ~$380k in annual engineering productivity."
-                </div>
-              </div>
-            </div>
-          </div>
-        `,
-        workbookHTML: `
-          <div class="space-y-6">
-            <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
-              <h3 class="text-base font-bold text-white mb-2 flex items-center gap-2">
-                <i class="fa-solid fa-pen-clip text-cyan-400"></i> Exercise 2.1: Flaky Quarantine SLA Policy
-              </h3>
-              <p class="text-xs text-slate-300 leading-relaxed mb-4">
-                Draft a production test quarantine policy for your next behavioral interview:
-              </p>
-              <textarea id="wb-2-q1" oninput="saveNote(2, 'q1', this.value)" rows="4" class="w-full bg-[#020617] border border-slate-700 rounded-lg p-2.5 text-xs text-white focus:border-cyan-400" placeholder="Describe the trigger criteria for quarantining a test, maximum allowed quarantine duration, and SLA for remediation..."></textarea>
-            </div>
-          </div>
-        `
-      },
-      3: {
-        moduleNum: "MODULE 02",
-        moduleTitle: "Evidence-Based SDET Resume & LinkedIn Inbound Engine",
-        lessonTitle: "The 4-Element SDET Bullet Formula [Action + Scope + Tool + Metric]",
-        subtitle: "How to transform passive testing tasks into high-impact software engineering accomplishments.",
-        tags: ["Resume Writing", "CAR-M Formula", "Engineering Metrics", "ATS Bullet Points", "SDET Career"],
-        isFree: false,
-        coreHTML: `
-          <div class="space-y-6">
-            <h3 class="text-lg font-bold text-white flex items-center gap-2">
-              <span class="text-cyan-400">1.</span> The CAR-M Engineering Bullet Architecture
-            </h3>
-            <p class="text-slate-300 text-sm leading-relaxed">
-              Every bullet point on an executive SDET resume must follow the 4-part formula:
-              <strong class="text-cyan-300">[Action Verb] + [System Scope] + [Technical Tool/Framework] + [Measurable Outcome]</strong>.
-            </p>
-
-            <!-- Live Bullet Builder Widget -->
-            <div class="bg-[#0d1526] border-2 border-cyan-500/60 rounded-2xl p-6 space-y-4">
-              <span class="text-xs font-black uppercase tracking-wider text-cyan-400 flex items-center gap-1.5">
-                <i class="fa-solid fa-wand-magic-sparkles"></i> Live CAR-M Bullet Builder
-              </span>
-
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label class="block text-xs font-semibold text-slate-300 mb-1">1. Action Verb:</label>
-                  <input type="text" id="bm-action" value="Architected" oninput="updateBulletPreview()" class="w-full bg-[#030712] border border-slate-700 rounded-lg p-2 text-xs text-white">
-                </div>
-                <div>
-                  <label class="block text-xs font-semibold text-slate-300 mb-1">2. System Scope:</label>
-                  <input type="text" id="bm-scope" value="a distributed E2E regression test architecture" oninput="updateBulletPreview()" class="w-full bg-[#030712] border border-slate-700 rounded-lg p-2 text-xs text-white">
-                </div>
-                <div>
-                  <label class="block text-xs font-semibold text-slate-300 mb-1">3. Technology / Framework:</label>
-                  <input type="text" id="bm-tool" value="using Playwright and TypeScript with Docker" oninput="updateBulletPreview()" class="w-full bg-[#030712] border border-slate-700 rounded-lg p-2 text-xs text-white">
-                </div>
-                <div>
-                  <label class="block text-xs font-semibold text-slate-300 mb-1">4. Metric / Outcome:</label>
-                  <input type="text" id="bm-metric" value="reducing CI/CD cycle duration from 52m to 14m (73% speedup)" oninput="updateBulletPreview()" class="w-full bg-[#030712] border border-slate-700 rounded-lg p-2 text-xs text-white">
-                </div>
-              </div>
-
-              <div class="bg-[#020617] border border-slate-800 rounded-xl p-4">
-                <div class="text-[11px] text-slate-400 uppercase tracking-wider font-bold mb-1">Live Generated Resume Bullet:</div>
-                <div id="bullet-preview-box" class="text-xs text-cyan-200 font-medium leading-relaxed font-mono">
-                  Architected a distributed E2E regression test architecture using Playwright and TypeScript with Docker, reducing CI/CD cycle duration from 52m to 14m (73% speedup).
-                </div>
-              </div>
-            </div>
-          </div>
-        `,
-        workbookHTML: `
-          <div class="space-y-6">
-            <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
-              <h3 class="text-base font-bold text-white mb-2 flex items-center gap-2">
-                <i class="fa-solid fa-pen-clip text-cyan-400"></i> Exercise 3.1: 3-Bullet Transformation
-              </h3>
-              <p class="text-xs text-slate-300 leading-relaxed mb-4">
-                Draft 3 resume bullets from your actual background using the CAR-M formula:
-              </p>
-              <div class="space-y-3">
-                <textarea id="wb-3-q1" oninput="saveNote(3, 'q1', this.value)" rows="2" class="w-full bg-[#020617] border border-slate-700 rounded-lg p-2.5 text-xs text-white focus:border-cyan-400" placeholder="Bullet 1 (Test Architecture / Framework Design)..."></textarea>
-                <textarea id="wb-3-q2" oninput="saveNote(3, 'q2', this.value)" rows="2" class="w-full bg-[#020617] border border-slate-700 rounded-lg p-2.5 text-xs text-white focus:border-cyan-400" placeholder="Bullet 2 (CI/CD Sharding / Execution Velocity)..."></textarea>
-                <textarea id="wb-3-q3" oninput="saveNote(3, 'q3', this.value)" rows="2" class="w-full bg-[#020617] border border-slate-700 rounded-lg p-2.5 text-xs text-white focus:border-cyan-400" placeholder="Bullet 3 (API Contract Testing / Flakiness Elimination)..."></textarea>
-              </div>
-            </div>
-          </div>
-        `
-      },
-      4: {
-        moduleNum: "MODULE 02",
-        moduleTitle: "Evidence-Based SDET Resume & LinkedIn Inbound Engine",
-        lessonTitle: "The 7-Prompt LinkedIn Recruiter Attraction Playbook",
-        subtitle: "Optimize your profile headline, about section, and featured assets for corporate recruiter boolean queries.",
-        tags: ["LinkedIn SEO", "Boolean Search", "Inbound Leads", "Recruiter Pitch", "Personal Brand"],
-        isFree: false,
-        coreHTML: `
-          <div class="space-y-4">
-            <h3 class="text-lg font-bold text-white flex items-center gap-2">
-              <span class="text-cyan-400">1.</span> Boolean Recruiter Indexing
-            </h3>
-            <p class="text-slate-300 text-sm leading-relaxed">
-              Executive tech recruiters use Boolean search queries inside LinkedIn Recruiter. Your headline and About section must contain the exact token combinations they query daily.
-            </p>
-            <div class="bg-[#020617] border border-slate-800 rounded-xl p-4 font-mono text-xs text-amber-300 leading-relaxed overflow-x-auto">
-// Standard U.S. Recruiter Boolean Search Query:
-("SDET" OR "Software Development Engineer in Test" OR "Quality Architect")
-AND ("Playwright" OR "Cypress")
-AND ("TypeScript" OR "Python")
-AND ("CI/CD" OR "GitHub Actions")
-            </div>
-          </div>
-        `,
-        workbookHTML: `
-          <div class="space-y-6">
-            <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
-              <h3 class="text-base font-bold text-white mb-2 flex items-center gap-2">
-                <i class="fa-solid fa-pen-clip text-cyan-400"></i> Exercise 4.1: High-Conversion Headline
-              </h3>
-              <p class="text-xs text-slate-300 leading-relaxed mb-4">
-                Draft your 220-character LinkedIn headline combining your target role, stack, and primary outcome:
-              </p>
-              <input type="text" id="wb-4-q1" oninput="saveNote(4, 'q1', this.value)" class="w-full bg-[#020617] border border-slate-700 rounded-lg p-2.5 text-xs text-white focus:border-cyan-400" placeholder="Senior SDET | Playwright & TypeScript | CI/CD Sharding & Flaky Quarantine | $160k+ Focus">
-            </div>
-          </div>
-        `
-      },
-      5: {
-        moduleNum: "MODULE 03",
-        moduleTitle: "Test Architecture & Code Quality Loops",
-        lessonTitle: "Test Architecture Design, Parallel Execution & CI/CD Sharding",
-        subtitle: "Distributing test suites across concurrent workers and cloud runners using matrix sharding.",
-        tags: ["Playwright", "CI/CD Sharding", "GitHub Actions", "Parallelism", "Docker Runners"],
-        isFree: false,
-        coreHTML: `
-          <div class="space-y-4">
-            <h3 class="text-lg font-bold text-white flex items-center gap-2">
-              <span class="text-cyan-400">1.</span> Scaling Test Execution via Matrix Shards
-            </h3>
-            <p class="text-slate-300 text-sm leading-relaxed">
-              Running 800 E2E tests sequentially takes 1.5 hours. By implementing 4-shard matrix execution in GitHub Actions, total run time drops linearly to under 18 minutes.
-            </p>
-
-            <div class="bg-[#020617] border border-slate-800 rounded-xl p-4 font-mono text-xs text-emerald-300 leading-relaxed overflow-x-auto">
-# GitHub Actions Matrix Sharding Configuration
-strategy:
-  fail-fast: false
-  matrix:
-    shard: [1, 2, 3, 4]
-steps:
-  - name: Run Playwright Tests with Sharding
-    run: npx playwright test --shard=\${{ matrix.shard }}/4
-            </div>
-          </div>
-        `,
-        workbookHTML: `
-          <div class="space-y-6">
-            <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
-              <h3 class="text-base font-bold text-white mb-2 flex items-center gap-2">
-                <i class="fa-solid fa-pen-clip text-cyan-400"></i> Exercise 5.1: Architecture Defense Blueprint
-              </h3>
-              <p class="text-xs text-slate-300 leading-relaxed mb-4">
-                Write a 4-step architectural defense explaining how you handle shared test state across parallel shards:
-              </p>
-              <textarea id="wb-5-q1" oninput="saveNote(5, 'q1', this.value)" rows="4" class="w-full bg-[#020617] border border-slate-700 rounded-lg p-2.5 text-xs text-white focus:border-cyan-400" placeholder="Explain isolated tenant fixtures, database seeding strategies, and test reporting aggregation..."></textarea>
-            </div>
-          </div>
-        `
-      },
-      6: {
-        moduleNum: "MODULE 03",
-        moduleTitle: "Test Architecture & Code Quality Loops",
-        lessonTitle: "API Contract Testing with Pact & Provider Verification Gates",
-        subtitle: "Eliminating brittle end-to-end integration dependencies with consumer-driven contract testing.",
-        tags: ["Contract Testing", "Pact.io", "Microservices", "API Quality", "Shift Left"],
-        isFree: false,
-        coreHTML: `
-          <div class="space-y-4">
-            <h3 class="text-lg font-bold text-white flex items-center gap-2">
-              <span class="text-cyan-400">1.</span> The Consumer-Driven Contract Cycle
-            </h3>
-            <p class="text-slate-300 text-sm leading-relaxed">
-              Instead of running flaky multi-service integration environments in staging, contract testing guarantees API boundary compliance during pull request validation.
-            </p>
-          </div>
-        `,
-        workbookHTML: `
-          <div class="space-y-6">
-            <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
-              <h3 class="text-base font-bold text-white mb-2 flex items-center gap-2">
-                <i class="fa-solid fa-pen-clip text-cyan-400"></i> Exercise 6.1: Define a Pact Interaction Schema
-              </h3>
-              <textarea id="wb-6-q1" oninput="saveNote(6, 'q1', this.value)" rows="4" class="w-full bg-[#020617] border border-slate-700 rounded-lg p-2.5 text-xs text-white focus:border-cyan-400" placeholder="Define expected status codes, request headers, and response payload JSON body..."></textarea>
-            </div>
-          </div>
-        `
-      },
-      7: {
-        moduleNum: "MODULE 03",
-        moduleTitle: "Test Architecture & Code Quality Loops",
-        lessonTitle: "The SDET Live Coding Gauntlet: Algorithms & Custom Framework Fixtures",
-        subtitle: "How to crush 45-minute live coding interviews without getting tripped up by edge cases.",
-        tags: ["Live Coding", "DSA for SDET", "Custom Fixtures", "Interview Gauntlet", "Coding Test"],
-        isFree: false,
-        coreHTML: `
-          <div class="space-y-4">
-            <h3 class="text-lg font-bold text-white flex items-center gap-2">
-              <span class="text-cyan-400">1.</span> The 3 Rounds of SDET Technical Interviews
-            </h3>
-            <p class="text-slate-300 text-sm leading-relaxed">
-              Tier-1 companies evaluate SDET candidates across three technical evaluations: Data Structures (Strings/Maps/Recursion), Framework Component Architecture, and Real-time Debugging.
-            </p>
-          </div>
-        `,
-        workbookHTML: `
-          <div class="space-y-6">
-            <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
-              <h3 class="text-base font-bold text-white mb-2 flex items-center gap-2">
-                <i class="fa-solid fa-pen-clip text-cyan-400"></i> Exercise 7.1: Live Coding Clarification Checklist
-              </h3>
-              <textarea id="wb-7-q1" oninput="saveNote(7, 'q1', this.value)" rows="3" class="w-full bg-[#020617] border border-slate-700 rounded-lg p-2.5 text-xs text-white focus:border-cyan-400" placeholder="List the 4 questions you will ask your interviewer before writing a single line of code..."></textarea>
-            </div>
-          </div>
-        `
-      },
-      8: {
-        moduleNum: "MODULE 04",
-        moduleTitle: "Offer Evaluation & Strategic Career Execution",
-        lessonTitle: "Decoding U.S. Total Compensation (Base, Bonus & 4-Year RSU Equity)",
-        subtitle: "How to evaluate stock grant vesting schedules and negotiate competing remote offers with confidence.",
-        tags: ["Compensation", "RSUs", "Salary Negotiation", "Offer Evaluation", "Stock Grants"],
-        isFree: false,
-        coreHTML: `
-          <div class="space-y-4">
-            <h3 class="text-lg font-bold text-white flex items-center gap-2">
-              <span class="text-cyan-400">1.</span> Anatomy of a $165k U.S. Offer Package
-            </h3>
-            <p class="text-slate-300 text-sm leading-relaxed">
-              U.S. engineering offers are evaluated on Total Compensation (TC), consisting of Base Salary, Annual Performance Bonus, and Equity (RSUs with 1-year cliff and 4-year vesting).
-            </p>
-
-            <!-- Total Comp Calculator -->
-            <div class="bg-[#0d1526] border-2 border-cyan-500/60 rounded-2xl p-6 space-y-4">
-              <span class="text-xs font-black uppercase tracking-wider text-cyan-400 flex items-center gap-1.5">
-                <i class="fa-solid fa-hand-holding-dollar"></i> U.S. Total Compensation Calculator
-              </span>
-
-              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div>
-                  <label class="block text-xs font-semibold text-slate-300 mb-1">Base Salary ($):</label>
-                  <input type="number" id="tc-base" value="145000" oninput="calcTC()" class="w-full bg-[#030712] border border-slate-700 rounded-lg p-2 text-xs text-white">
-                </div>
-                <div>
-                  <label class="block text-xs font-semibold text-slate-300 mb-1">Annual Bonus (%):</label>
-                  <input type="number" id="tc-bonus" value="10" oninput="calcTC()" class="w-full bg-[#030712] border border-slate-700 rounded-lg p-2 text-xs text-white">
-                </div>
-                <div>
-                  <label class="block text-xs font-semibold text-slate-300 mb-1">4-Year Equity / RSUs ($):</label>
-                  <input type="number" id="tc-rsu" value="80000" oninput="calcTC()" class="w-full bg-[#030712] border border-slate-700 rounded-lg p-2 text-xs text-white">
-                </div>
-              </div>
-
-              <div class="bg-[#020617] border border-slate-800 rounded-xl p-4 flex flex-col sm:flex-row items-center justify-between gap-3">
-                <div>
-                  <div class="text-xs text-slate-400">Annualized Total Compensation (Year 1):</div>
-                  <div id="tc-total" class="text-2xl font-black text-emerald-400">$179,500 USD / yr</div>
-                </div>
-                <div class="text-xs text-slate-400">
-                  Includes $20k/yr annual equity vest + $14.5k bonus.
-                </div>
-              </div>
-            </div>
-          </div>
-        `,
-        workbookHTML: `
-          <div class="space-y-6">
-            <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
-              <h3 class="text-base font-bold text-white mb-2 flex items-center gap-2">
-                <i class="fa-solid fa-pen-clip text-cyan-400"></i> Exercise 8.1: Counter-Offer Negotiation Script
-              </h3>
-              <textarea id="wb-8-q1" oninput="saveNote(8, 'q1', this.value)" rows="4" class="w-full bg-[#020617] border border-slate-700 rounded-lg p-2.5 text-xs text-white focus:border-cyan-400" placeholder="Draft your counter-offer response asking for a $15k bump in base salary or signing bonus..."></textarea>
-            </div>
-          </div>
-        `
-      },
-      9: {
-        moduleNum: "MODULE 04",
-        moduleTitle: "Offer Evaluation & Strategic Career Execution",
-        lessonTitle: "The 90-Day U.S. Job Search Sprint & Pipeline Execution Tracker",
-        subtitle: "Execute a structured application and referral sprint to generate 3-5 concurrent final round interviews.",
-        tags: ["Job Search Sprint", "Kanban Pipeline", "Referral Strategy", "Interview Tracking", "Execution"],
-        isFree: false,
-        coreHTML: `
-          <div class="space-y-4">
-            <h3 class="text-lg font-bold text-white flex items-center gap-2">
-              <span class="text-cyan-400">1.</span> 90-Day Sprint Cadence
-            </h3>
-            <p class="text-slate-300 text-sm leading-relaxed">
-              Top engineers do not apply to 500 jobs randomly. They run a targeted 90-day search campaign focusing on 30 high-match companies, engineering referrals, and outbound recruiter engagement.
-            </p>
-          </div>
-        `,
-        workbookHTML: `
-          <div class="space-y-6">
-            <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
-              <h3 class="text-base font-bold text-white mb-2 flex items-center gap-2">
-                <i class="fa-solid fa-pen-clip text-cyan-400"></i> Exercise 9.1: Target Tier-1 Company Roster
-              </h3>
-              <textarea id="wb-9-q1" oninput="saveNote(9, 'q1', this.value)" rows="4" class="w-full bg-[#020617] border border-slate-700 rounded-lg p-2.5 text-xs text-white focus:border-cyan-400" placeholder="List your top 10 target companies, hiring managers, and relevant engineering contacts..."></textarea>
-            </div>
-          </div>
-        `
-      }
-    };
-
-    // Render Lesson View
-    function switchLesson(num) {
-      currentLessonNum = num;
-      var data = lessonData[num];
-
-      // Update Nav Button States
-      for (var i = 1; i <= 9; i++) {
-        var btn = document.getElementById("nav-btn-" + i);
-        if (btn) {
-          if (i === num) {
-            btn.className = "w-full text-left p-3 rounded-lg text-xs font-semibold flex items-center justify-between transition-all bg-cyan-950/60 border border-cyan-500/40 text-cyan-200 shadow-sm";
-          } else {
-            btn.className = "w-full text-left p-3 rounded-lg text-xs font-medium flex items-center justify-between transition-all hover:bg-slate-800/60 text-slate-300";
-          }
-        }
-      }
-
-      // Update Top Indicator & Headers
-      document.getElementById("top-lesson-indicator").innerText = "Lesson 0" + num + " • " + data.lessonTitle;
-      document.getElementById("lesson-module-badge").innerText = data.moduleNum;
-      document.getElementById("lesson-title").innerText = data.lessonTitle;
-      document.getElementById("lesson-subtitle").innerText = data.subtitle;
-
-      // Free Badge
-      var freeBadge = document.getElementById("lesson-free-badge");
-      if (data.isFree) {
-        freeBadge.classList.remove("hidden");
-      } else {
-        freeBadge.classList.add("hidden");
-      }
-
-      // Populate Contents
-      document.getElementById("dynamic-core-content").innerHTML = data.coreHTML;
-      document.getElementById("dynamic-workbook-content").innerHTML = data.workbookHTML;
-
-      // Render Tag Chips
-      renderTagChips(data.tags);
-
-      // Restore Workbook Notes
-      restoreNotes(num);
-
-      // Scroll to Top
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    // Tab Switching
-    function setActiveTab(tab) {
-      currentTab = tab;
-      var coreView = document.getElementById("view-core");
-      var wbView = document.getElementById("view-workbook");
-      var coreBtn = document.getElementById("tab-core-btn");
-      var wbBtn = document.getElementById("tab-workbook-btn");
-
-      if (tab === 'core') {
-        coreView.classList.remove("hidden");
-        wbView.classList.add("hidden");
-        coreBtn.className = "px-4 py-2 rounded-lg text-xs font-bold border transition-all bg-cyan-950 border-cyan-500 text-cyan-300";
-        wbBtn.className = "px-4 py-2 rounded-lg text-xs font-bold border transition-all bg-slate-900 border-slate-700 text-slate-400 hover:text-slate-200";
-      } else {
-        coreView.classList.add("hidden");
-        wbView.classList.remove("hidden");
-        coreBtn.className = "px-4 py-2 rounded-lg text-xs font-bold border transition-all bg-slate-900 border-slate-700 text-slate-400 hover:text-slate-200";
-        wbBtn.className = "px-4 py-2 rounded-lg text-xs font-bold border transition-all bg-cyan-950 border-cyan-500 text-cyan-300";
-      }
-    }
-
-    // Render Individual Tag Chips
-    function renderTagChips(tags) {
-      var container = document.getElementById("tag-chips-container");
-      container.innerHTML = "";
-      tags.forEach(function(tag) {
-        var chip = document.createElement("button");
-        chip.className = "chip px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-800 hover:bg-cyan-950 border border-slate-700 hover:border-cyan-500 text-slate-300 hover:text-cyan-300 flex items-center gap-1";
-        chip.innerHTML = '<i class="fa-solid fa-copy text-[9px]"></i> ' + tag;
-        chip.onclick = function() {
-          copyToClipboard(tag, "Tag '" + tag + "' copied!");
-        };
-        container.appendChild(chip);
-      });
-    }
-
-    // Hotmart Hub Actions
-    function copyCurrentModuleTitle() {
-      var data = lessonData[currentLessonNum];
-      copyToClipboard(data.moduleNum + ": " + data.moduleTitle, "Module title copied!");
-    }
-
-    function copyCurrentLessonTitle() {
-      var data = lessonData[currentLessonNum];
-      copyToClipboard("Lesson " + currentLessonNum + ": " + data.lessonTitle, "Lesson title copied!");
-    }
-
-    function copyAllCurrentTags() {
-      var data = lessonData[currentLessonNum];
-      copyToClipboard(data.tags.join(", "), "All tags copied as CSV!");
-    }
-
-    function copyCleanHotmartHTML() {
-      var data = lessonData[currentLessonNum];
-      var clean = "<div style=\"font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #1e293b; max-width: 860px; margin: 0 auto; padding: 20px;\">\n" +
-                  "  <h2 style=\"color: #0f172a; font-size: 24px; font-weight: 800; border-bottom: 2px solid #06b6d4; padding-bottom: 8px;\">" + data.lessonTitle + "</h2>\n" +
-                  "  <p style=\"color: #475569; font-size: 14px; margin-bottom: 24px;\">" + data.subtitle + "</p>\n" +
-                  "  <div style=\"background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 18px; margin: 20px 0;\">\n" +
-                  "    <h3 style=\"color: #0284c7; margin-top: 0;\">Key Engineering Objectives</h3>\n" +
-                  "    <p>Complete this module inside the interactive student portal.</p>\n" +
-                  "  </div>\n" +
-                  "</div>";
-      copyToClipboard(clean, "Clean Hotmart HTML copied!");
-    }
-
-    function copyModuleImagePrompt() {
-      var data = lessonData[currentLessonNum];
-      var prompt = "Create a premium 16:9 horizontal module thumbnail, 1920 × 1080 pixels, for 'The SDET & Test Automation Job Search Playbook'.\n\n" +
-                   "MODULE IDENTIFICATION — EXACT TEXT:\n\"" + data.moduleNum + "\"\n\n" +
-                   "MODULE TITLE — EXACT TEXT:\n\"" + data.moduleTitle.toUpperCase() + "\"\n\n" +
-                   "SUBTITLE — EXACT TEXT:\n\"BUILD YOUR " + data.moduleTitle.toUpperCase() + " EXPERTISE. POSITION YOUR EXPERIENCE. ADVANCE YOUR CAREER.\"\n\n" +
-                   "BRAND IDENTITY: Deep dark navy background, electric cyan and blue cinematic lighting, white bold sans-serif typography, Global Tech Career visual aesthetic.";
-      copyToClipboard(prompt, "Module Image Prompt copied!");
-    }
-
-    function copyLessonImagePrompt() {
-      var data = lessonData[currentLessonNum];
-      var prompt = "Create a premium 16:9 horizontal lesson thumbnail, 1920 × 1080 pixels, for 'The SDET & Test Automation Job Search Playbook'.\n\n" +
-                   "LESSON IDENTIFICATION — EXACT TEXT:\n\"LESSON 0" + currentLessonNum + "\"\n\n" +
-                   "LESSON TITLE — EXACT TEXT:\n\"" + data.lessonTitle.toUpperCase() + "\"\n\n" +
-                   "BRAND IDENTITY: Deep dark navy background, electric cyan lighting, photorealistic modern tech environment, Global Tech Career visual identity.";
-      copyToClipboard(prompt, "Lesson Image Prompt copied!");
-    }
-
-    function copySnippet(id) {
-      var text = document.getElementById(id).innerText;
-      copyToClipboard(text, "Prompt copied!");
-    }
-
-    function copyToClipboard(text, message) {
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(text).then(function() {
-          showToast(message);
-        });
-      } else {
-        var temp = document.createElement("textarea");
-        temp.value = text;
-        document.body.appendChild(temp);
-        temp.select();
-        document.execCommand("copy");
-        document.body.removeChild(temp);
-        showToast(message);
-      }
-    }
-
-    function showToast(msg) {
-      var toast = document.getElementById("toast");
-      document.getElementById("toast-msg").innerText = msg;
-      toast.classList.remove("translate-y-20", "opacity-0");
-      setTimeout(function() {
-        toast.classList.add("translate-y-20", "opacity-0");
-      }, 2500);
-    }
-
-    // LocalStorage Workbook Persistence
-    function saveNote(lesson, key, val) {
-      localStorage.setItem("sdet_playbook_L" + lesson + "_" + key, val);
-    }
-
-    function restoreNotes(lesson) {
-      ['q1', 'q2', 'q3'].forEach(function(k) {
-        var el = document.getElementById("wb-" + lesson + "-" + k);
-        if (el) {
-          var saved = localStorage.getItem("sdet_playbook_L" + lesson + "_" + k);
-          if (saved) el.value = saved;
-        }
-      });
-    }
-
-    // Interactive Lab 1: ATS Scanner
     function loadSampleJD() {
-      var sample = "Senior SDET / Quality Engineering Architect (Remote - US)\n\nRequirements:\n- 5+ years designing enterprise test automation frameworks using Playwright, TypeScript, and Docker.\n- Experience implementing CI/CD pipelines in GitHub Actions with test matrix sharding.\n- Background in API Contract Testing with Pact and performance validation with k6.\n- Track record eliminating flaky tests, reducing CI runtime, and lowering defect escape rates.\n- Strong proficiency in Data Structures and Algorithms.";
-      document.getElementById("jd-input-box").value = sample;
+      document.getElementById("jd-input-box").value = sampleJD;
       runJDAnalysis();
     }
 
@@ -1033,65 +95,31 @@ steps:
     function runJDAnalysis() {
       var text = document.getElementById("jd-input-box").value.toLowerCase();
       if (!text.trim()) {
-        showToast("Please paste a Job Description first.");
+        alert("Please paste a Job Description first.");
         return;
       }
-      var tokens = [
-        "Playwright", "TypeScript", "Python", "CI/CD", "GitHub Actions", 
-        "Docker", "Pact", "Contract Testing", "Sharding", "Parallel", 
-        "Flaky", "k6", "Performance", "Algorithms"
-      ];
+
       var found = 0;
       var chipsBox = document.getElementById("jd-chips-container");
       chipsBox.innerHTML = "";
 
-      tokens.forEach(function(tok) {
+      coreTokens.forEach(function(tok) {
         var match = text.indexOf(tok.toLowerCase()) !== -1;
         var badge = document.createElement("span");
-        badge.className = "px-2.5 py-1 rounded-md text-xs font-bold " + (match ? "bg-emerald-950 text-emerald-300 border border-emerald-600" : "bg-slate-800 text-slate-500 border border-slate-700");
+        badge.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all " + 
+          (match ? "bg-emerald-950 text-emerald-300 border border-emerald-500 shadow-sm shadow-emerald-950/50" : "bg-slate-900 text-slate-500 border border-slate-800");
         badge.innerText = (match ? "✓ " : "○ ") + tok;
         chipsBox.appendChild(badge);
         if (match) found++;
       });
 
-      var score = Math.round((found / tokens.length) * 100);
-      document.getElementById("jd-score-banner").innerHTML = "ATS Alignment Match: <span class='" + (score >= 70 ? "text-emerald-400" : "text-amber-400") + "'>" + score + "%</span> (" + found + "/" + tokens.length + " Core Engineering Signals)";
+      var score = Math.round((found / coreTokens.length) * 100);
+      document.getElementById("jd-score-banner").innerHTML = 
+        "ATS Alignment Match: <span class='" + (score >= 70 ? "text-emerald-400" : "text-amber-400") + " font-black text-lg'>" + 
+        score + "%</span> (" + found + "/" + coreTokens.length + " Core Signals Detected)";
+      
       document.getElementById("jd-results-panel").classList.remove("hidden");
     }
-
-    // Interactive Lab 2: Flaky ROI
-    function calculateFlakyROI() {
-      var devs = parseFloat(document.getElementById("calc-devs").value) || 0;
-      var hours = parseFloat(document.getElementById("calc-hours").value) || 0;
-      var rate = parseFloat(document.getElementById("calc-rate").value) || 0;
-      var annual = Math.round(devs * hours * rate * 52);
-      document.getElementById("calc-annual-cost").innerText = "$" + annual.toLocaleString() + " USD / year";
-    }
-
-    // Interactive Lab 3: Bullet Builder
-    function updateBulletPreview() {
-      var a = document.getElementById("bm-action").value.trim();
-      var s = document.getElementById("bm-scope").value.trim();
-      var t = document.getElementById("bm-tool").value.trim();
-      var m = document.getElementById("bm-metric").value.trim();
-      document.getElementById("bullet-preview-box").innerText = a + " " + s + " " + t + ", " + m + ".";
-    }
-
-    // Interactive Lab 8: Total Comp
-    function calcTC() {
-      var b = parseFloat(document.getElementById("tc-base").value) || 0;
-      var pct = parseFloat(document.getElementById("tc-bonus").value) || 0;
-      var rsu = parseFloat(document.getElementById("tc-rsu").value) || 0;
-      var bonusVal = b * (pct / 100);
-      var annualRSU = rsu / 4;
-      var total = Math.round(b + bonusVal + annualRSU);
-      document.getElementById("tc-total").innerText = "$" + total.toLocaleString() + " USD / yr";
-    }
-
-    // Initialize on page load
-    document.addEventListener("DOMContentLoaded", function() {
-      switchLesson(1);
-    });
   </script>
 </body>
 </html>
